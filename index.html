@@ -7,8 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2=family=Prompt:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Prompt', sans-serif; }
     </style>
@@ -25,19 +24,27 @@
                         VIRTUAL RUN <span class="text-xs bg-white text-orange-600 px-2 py-0.5 rounded-full border border-amber-400 shadow-sm">2026</span>
                     </h1>
                 </div>
-                <div class="w-10 h-10 rounded-full border-2 border-amber-300 bg-white/20 flex items-center justify-center text-lg font-bold">🏃‍♂️</div>
+                <button id="clearUserBtn" class="text-xs bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded-xl transition-all hidden" onclick="resetUser()">เปลี่ยนรหัสผู้ใช้ 🔄</button>
             </div>
         </header>
 
         <main class="flex-1 px-4 -mt-5 z-10 space-y-4">
 
-            <section id="profileTab" class="tab-content space-y-4">
+            <section id="loginSection" class="bg-white rounded-3xl p-6 shadow-xl border border-orange-100 text-center space-y-4">
+                <span class="text-4xl inline-block animate-bounce">🏃‍♂️🔑</span>
+                <h3 class="font-black text-lg text-slate-800">ยืนยันตัวตนเข้าสู่ระบบ</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">กรุณากรอกรหัสนักวิ่ง หรือรหัสพนักงานของคุณเพื่อเริ่มต้นสะสมระยะทาง (ระบบจะจดจำไว้ในเครื่องนี้โดยอัตโนมัติ)</p>
+                <input type="text" id="runnerIdRegInput" placeholder="กรอกรหัสนักวิ่งของคุณ เช่น ID101" class="w-full text-center px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 font-bold uppercase tracking-wider">
+                <button onclick="saveRunnerId()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black py-3.5 rounded-2xl shadow-md hover:opacity-95 transition-all text-sm">เข้าสู่ระบบสำเร็จ</button>
+            </section>
+
+            <section id="profileTab" class="tab-content space-y-4 hidden">
                 <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-orange-50/50">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white text-xl shadow-md">🏆</div>
                         <div>
-                            <h3 class="font-bold text-slate-700 text-base">ระยะทางสะสมของคุณ</h3>
-                            <p class="text-[11px] text-slate-400">คำนวณรวมอัตโนมัติจากฐานข้อมูล</p>
+                            <h3 class="font-bold text-slate-700 text-base" id="profileHello">สวัสดีคุณนักวิ่ง</h3>
+                            <p class="text-[11px] text-slate-400" id="profileSubId">รหัสพนักงาน: ยังไม่ได้เข้าสู่ระบบ</p>
                         </div>
                     </div>
                     
@@ -51,7 +58,7 @@
                     </div>
                     <div class="flex justify-between text-xs font-bold text-orange-600 mt-2">
                         <span id="progressPercent">0% Completed</span>
-                        <span class="text-amber-500">Keep going!</span>
+                        <span class="text-amber-500">พยายามเข้าครับ! 🔥</span>
                     </div>
                 </div>
             </section>
@@ -98,7 +105,7 @@
                             <thead>
                                 <tr class="bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-wider border-b border-slate-100">
                                     <th class="py-3 px-3 text-center">อันดับ</th>
-                                    <th class="py-3 px-2">รายชื่อนักวิ่ง (จาก Google Sheet)</th>
+                                    <th class="py-3 px-2">รายชื่อนักวิ่ง (ดึงจากข้อมูลใน Sheet)</th>
                                     <th class="py-3 px-3 text-right">ระยะทางรวม</th>
                                 </tr>
                             </thead>
@@ -128,29 +135,61 @@
     </div>
 
     <script>
-        // 🌟 วาง URL เว็บแอป Google Apps Script ของคุณที่นี่
+        // 🌟 สำคัญมาก: นำลิงก์ Web App URL จากการ Deploy ครั้งใหม่บน Google Apps Script มาใส่ตรงนี้ครับ
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz0wBgeAlyFQJElLS9QQznAIgs-Wdobc8tBAKsYIRx9JlYgOaUQH129Bu6kECw-lym8/exec";
 
+        let currentRunnerId = localStorage.getItem("runner_id");
         let base64File = "";
         let fileName = "";
         let fileMimeType = "";
 
         document.addEventListener("DOMContentLoaded", () => {
-            fetchData();
+            checkUserSession();
         });
 
-        // ฟังก์ชันดึงผล Submissions จากชีตมาแสดงผลบน Leaderboard
+        function checkUserSession() {
+            if (currentRunnerId) {
+                document.getElementById("loginSection").classList.add("hidden");
+                document.getElementById("clearUserBtn").classList.remove("hidden");
+                document.getElementById("profileSubId").innerText = `รหัสนักวิ่งประจำเครื่อง: ${currentRunnerId.toUpperCase()}`;
+                switchTab('profile');
+                fetchData();
+            } else {
+                document.getElementById("loginSection").classList.remove("hidden");
+                document.getElementById("clearUserBtn").classList.add("hidden");
+                // ซ่อนแท็บทั้งหมดถ้ายังไม่ล็อคอิน
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            }
+        }
+
+        function saveRunnerId() {
+            const idInput = document.getElementById("runnerIdRegInput").value.trim();
+            if (!idInput) { alert("กรุณาระบุรหัสพนักงาน/รหัสนักวิ่งก่อนครับ"); return; }
+            localStorage.setItem("runner_id", idInput);
+            currentRunnerId = idInput;
+            checkUserSession();
+        }
+
+        function resetUser() {
+            if (confirm("ต้องการเปลี่ยนบัญชีผู้ใช้งานเครื่องนี้ใช่หรือไม่?")) {
+                localStorage.removeItem("runner_id");
+                currentRunnerId = null;
+                checkUserSession();
+            }
+        }
+
         async function fetchData() {
             if (!GAS_URL || GAS_URL.includes("วาง_URL_")) return;
             try {
-                const response = await fetch(`${GAS_URL}?action=getLeaderboard`);
-                const data = await response.json();
+                // 1. ดึงข้อมูล Leaderboard หลักรวมรายชื่อพนักงาน
+                const lbResponse = await fetch(`${GAS_URL}?action=getLeaderboard`);
+                const lbData = await lbResponse.json();
                 
                 const tbody = document.getElementById('leaderboardBody');
-                if (data && data.leaderboard && data.leaderboard.length > 0) {
+                if (lbData && lbData.leaderboard && lbData.leaderboard.length > 0) {
                     tbody.innerHTML = '';
                     
-                    data.leaderboard.forEach((item, index) => {
+                    lbData.leaderboard.forEach((item, index) => {
                         const rank = index + 1;
                         let rankBadge = '';
                         if (rank === 1) rankBadge = `<span class="w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-black border border-amber-300 shadow-sm mx-auto">1</span>`;
@@ -158,23 +197,30 @@
                         else if (rank === 3) rankBadge = `<span class="w-5 h-5 rounded-full text-purple-800 flex items-center justify-center text-[10px] font-black border border-purple-300 shadow-sm mx-auto" style="background-color: #fae8ff;">3</span>`;
                         else rankBadge = `<span class="text-slate-400 text-xs font-bold mx-auto block text-center">${rank}</span>`;
 
+                        // ทำไฮไลท์สีแถวถ้าเป็นแถวของรหัสพนักงานตัวเอง
+                        const isMe = String(item.id).toLowerCase() === String(currentRunnerId).toLowerCase();
+                        const rowStyle = isMe ? 'bg-orange-50 font-bold text-orange-900' : 'hover:bg-slate-50';
+
                         tbody.innerHTML += `
-                            <tr class="hover:bg-orange-50/10 transition-colors">
+                            <tr class="${rowStyle} transition-colors">
                                 <td class="py-3 px-3 text-center">${rankBadge}</td>
-                                <td class="py-3 px-2 flex items-center gap-2"><span>🏃</span> <span>${item.name}</span></td>
+                                <td class="py-3 px-2 flex items-center gap-2"><span>🏃</span> <span>${item.name} ${isMe ? '(คุณ)' : ''}</span></td>
                                 <td class="py-3 px-3 text-right font-bold text-orange-600">${parseFloat(item.totalDistance).toFixed(2)} กม.</td>
                             </tr>
                         `;
                     });
-
-                    // อัปเดตยอดระยะทางรวมของคนแรก (หรือของคุณเอง) ขึ้นหน้าแรก
-                    updateProfileProgress(data.leaderboard[0].totalDistance);
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-slate-400">ยังไม่มีข้อมูลในชีต Submissions</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-slate-400">ยังไม่มีประวัติการส่งผลการวิ่งบนฐานข้อมูล</td></tr>`;
                 }
+
+                // 2. ดึงความคืบหน้าระยะทางเฉพาะของคนล็อกอินเครื่องนี้ไปวาดหลอดความก้าวหน้า
+                const userResponse = await fetch(`${GAS_URL}?action=getUserProgress&runnerId=${encodeURIComponent(currentRunnerId)}`);
+                const userData = await userResponse.json();
+                updateProfileProgress(userData.totalDistance);
+
             } catch (error) {
                 console.error("Fetch error:", error);
-                document.getElementById('leaderboardBody').innerHTML = `<tr><td colspan="3" class="text-center py-8 text-red-500">ไม่สามารถเชื่อมต่อ Google Sheet ได้</td></tr>`;
+                document.getElementById('leaderboardBody').innerHTML = `<tr><td colspan="3" class="text-center py-8 text-red-500">การเชื่อมต่อหลังบ้านล้มเหลว กรุณาเช็ค Web App URL</td></tr>`;
             }
         }
 
@@ -184,7 +230,7 @@
             const target = 70.00;
             const percent = Math.min((dist / target) * 100, 100);
             document.getElementById('progressBar').style.width = percent + '%';
-            document.getElementById('progressPercent').innerText = percent.toFixed(0) + '% Completed';
+            document.getElementById('progressPercent').innerText = percent.toFixed(0) + '% สำเร็จสำเร็จ';
         }
 
         document.getElementById('fileInput').addEventListener('change', function(e) {
@@ -201,15 +247,16 @@
 
         document.getElementById('submitBtn').addEventListener('click', async function() {
             const distance = document.getElementById('distanceInput').value.trim();
-            if (!distance || distance <= 0) { alert('กรุณากรอกระยะทางวิ่งที่ถูกต้อง'); return; }
-            if (!base64File) { alert('กรุณาแนบรูปภาพหลักฐานการวิ่ง'); return; }
+            if (!distance || distance <= 0) { alert('กรุณากรอกระยะทางวิ่งที่ถูกต้องครับ'); return; }
+            if (!base64File) { alert('กรุณาแนบภาพถ่ายหลักฐานการวิ่งก่อนครับ'); return; }
 
             const btn = this;
-            btn.innerText = "กำลังอัปโหลดและบันทึกข้อมูล... ⏳";
+            btn.innerText = "กำลังส่งข้อมูลเข้าฐานข้อมูลระบบ... ⏳";
             btn.disabled = true;
 
             const payload = {
                 action: "submitData",
+                runnerId: currentRunnerId, // ส่งรหัสจำเครื่องไปแบบอัตโนมัติ
                 distance: parseFloat(distance),
                 fileData: base64File,
                 fileName: fileName,
@@ -221,7 +268,7 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    alert('บันทึกผลการวิ่งสำเร็จเรียบร้อยแล้ว! 🎉');
+                    alert('บันทึกผลการวิ่งเข้าสู่ตารางระบบสำเร็จเรียบร้อยแล้ว! 🎉');
                     document.getElementById('distanceInput').value = '';
                     document.getElementById('fileInput').value = '';
                     document.getElementById('fileNameDisplay').innerText = 'เลือกไฟล์รูปภาพหลักฐาน';
@@ -229,11 +276,11 @@
                     await fetchData();
                     switchTab('profile');
                 } else {
-                    alert('เกิดข้อผิดพลาดจากเซิร์ฟเวอร์: ' + result.message);
+                    alert('เกิดข้อผิดพลาดในการเขียนข้อมูล: ' + result.message);
                 }
             } catch (error) {
                 console.error("Submission error:", error);
-                alert('ส่งผลสำเร็จและอัปเดตเรียบร้อยแล้ว!');
+                alert('ระบบทำการส่งข้อมูลและรีเฟรชค่าตารางสำเร็จแล้ว!');
                 fetchData();
                 switchTab('profile');
             } finally {
@@ -242,10 +289,11 @@
             }
         });
 
-        // ระบบสลับหน้าแท็บแอป
         function switchTab(tabId, btnElement) {
+            if (!currentRunnerId) return; // ล็อกไม่ให้เปลี่ยนหน้าถ้าไม่ได้ใส่รหัสครั้งแรก
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.getElementById(tabId + 'Tab').classList.remove('hidden');
+            
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 if(!btn.classList.contains('bg-gradient-to-tr')) {
                     btn.classList.remove('text-orange-600');
