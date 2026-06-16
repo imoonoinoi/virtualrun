@@ -1,168 +1,184 @@
-<!-- คอนเทนเนอร์หลักคุมธีมแอปมือถือ -->
-<div class="max-w-md mx-auto min-h-[100dvh] bg-slate-50 shadow-2xl flex flex-col pb-24 relative overflow-x-hidden font-sans text-slate-800">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Run 70</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
-    <!-- HEADER: บาร์ด้านบนสีส้ม-ทอง -->
-    <header class="bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 text-white px-6 pt-6 pb-8 rounded-b-[2.5rem] shadow-lg relative">
-        <div class="flex justify-between items-center">
-            <div>
-                <p class="text-xs text-orange-100 uppercase tracking-widest font-semibold">Welcome to</p>
-                <h1 class="text-2xl font-black tracking-tight flex items-center gap-1">
-                    VIRTUAL RUN <span class="text-xs bg-white text-orange-600 px-2 py-0.5 rounded-full border border-amber-400 shadow-sm">2026</span>
-                </h1>
-            </div>
-            <div class="w-10 h-10 rounded-full border-2 border-amber-300 bg-white/20 flex items-center justify-center text-lg font-bold">
-                🏃‍♂️
-            </div>
-        </div>
-    </header>
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen">
 
-    <!-- CONTENT ZONE: พื้นที่แสดงผลแยกตามแท็บ -->
-    <main class="flex-1 px-4 -mt-4 z-10 space-y-4">
-
-        <!-- ================= [1] TAB: PROFILE (ข้อมูลผู้ใช้วิ่ง) ================= -->
-        <section id="profileTab" class="space-y-4">
-            <!-- การ์ดสรุปผลงานสีทอง-ส้ม -->
-            <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-orange-50/50">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white text-xl shadow-md shadow-orange-500/20">
-                        🏆
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-700 text-lg">ระยะทางสะสมของคุณ</h3>
-                        <p class="text-xs text-slate-400">อัปเดตล่าสุดเรียลไทม์</p>
-                    </div>
+    <div class="max-w-md mx-auto min-h-[100dvh] bg-slate-50 shadow-2xl flex flex-col pb-24 relative overflow-x-hidden text-slate-800">
+        
+        <header class="bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 text-white px-6 pt-6 pb-10 rounded-b-[2.5rem] shadow-lg relative">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-[10px] text-orange-100 uppercase tracking-widest font-semibold">Welcome to</p>
+                    <h1 class="text-2xl font-black tracking-tight flex items-center gap-1">
+                        VIRTUAL RUN <span class="text-xs bg-white text-orange-600 px-2 py-0.5 rounded-full border border-amber-400 shadow-sm">2026</span>
+                    </h1>
                 </div>
-                
-                <!-- ตัวเลขระยะทางเด่นๆ สไตล์แอป WIRTUAL -->
-                <div class="text-center my-6">
-                    <span class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500 tracking-tight" id="userTotalDistance">0.00</span>
-                    <span class="text-slate-400 font-bold text-sm ml-1">/ 70.00 กม.</span>
-                </div>
-
-                <!-- แถบ Progress Bar สีส้มทอง -->
-                <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200/50">
-                    <div class="bg-gradient-to-r from-orange-500 to-amber-400 h-2 rounded-full transition-all duration-500 shadow-inner" style="width: 45%" id="progressBar"></div>
-                </div>
-                <div class="flex justify-between text-xs font-bold text-orange-600 mt-2">
-                    <span id="progressPercent">45% Completed</span>
-                    <span class="text-amber-500">Keep going!</span>
+                <div class="w-10 h-10 rounded-full border-2 border-amber-300 bg-white/20 flex items-center justify-center text-lg font-bold">
+                    🏃‍♂️
                 </div>
             </div>
-        </section>
+        </header>
 
+        <main class="flex-1 px-4 -mt-5 z-10 space-y-4">
 
-        <!-- ================= [2] TAB: SUBMIT (ส่งผลการวิ่ง) ================= -->
-        <section id="submitTab" class="space-y-4 hidden">
-            <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-orange-50/50">
-                <h2 class="text-lg font-black text-slate-800 flex items-center gap-2 mb-4">
-                    <span class="w-2 h-5 bg-orange-500 rounded-full inline-block"></span> ส่งผลการวิ่งใหม่
-                </h2>
-                
-                <!-- ฟอร์มกรอกระยะทาง -->
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">ระยะทางที่วิ่งได้ (กิโลเมตร)</label>
-                        <input type="number" step="0.01" placeholder="เช่น 5.20" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 transition-all font-semibold">
-                    </div>
-
-                    <!-- อัปโหลดรูปภาพหลักฐาน -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">แนบภาพหลักฐานการวิ่ง</label>
-                        <div class="border-2 border-dashed border-slate-200 hover:border-orange-400 rounded-2xl p-4 transition-all bg-slate-50/50 text-center cursor-pointer relative group">
-                            <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
-                            <div class="space-y-1">
-                                <span class="text-2xl inline-block group-hover:scale-110 transition-transform">📸</span>
-                                <p class="text-sm font-bold text-slate-600">เลือกไฟล์รูปภาพหลักฐาน</p>
-                                <p class="text-xs text-slate-400">รองรับไฟล์ JPG, PNG</p>
-                            </div>
+            <section id="profileTab" class="tab-content space-y-4">
+                <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-orange-50/50">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white text-xl shadow-md shadow-orange-500/20">
+                            🏆
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-700 text-base">ระยะทางสะสมของคุณ</h3>
+                            <p class="text-[11px] text-slate-400">อัปเดตล่าสุดเรียลไทม์</p>
                         </div>
                     </div>
+                    
+                    <div class="text-center my-6">
+                        <span class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500 tracking-tight" id="userTotalDistance">0.00</span>
+                        <span class="text-slate-400 font-bold text-sm ml-1">/ 70.00 กม.</span>
+                    </div>
 
-                    <!-- ปุ่มส่งข้อมูล สีส้ม-ทองพรีเมียม -->
-                    <button class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black py-4 rounded-2xl shadow-lg shadow-orange-500/20 hover:opacity-95 transition-all text-base tracking-wide mt-2">
-                        บันทึกผลการวิ่งสำเร็จ
-                    </button>
+                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200/50">
+                        <div class="bg-gradient-to-r from-orange-500 to-amber-400 h-2 rounded-full transition-all duration-500 shadow-inner" style="width: 0%" id="progressBar"></div>
+                    </div>
+                    <div class="flex justify-between text-xs font-bold text-orange-600 mt-2">
+                        <span id="progressPercent">0% Completed</span>
+                        <span class="text-amber-500">Keep going!</span>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
 
-        <!-- ================= [3] TAB: LEADERBOARD (ตารางอันดับ) ================= -->
-        <section id="leaderboardTab" class="space-y-4 hidden">
-            <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-orange-50/50">
-                <h2 class="text-lg font-black text-slate-800 flex items-center gap-2 mb-4">
-                    <span class="w-2 h-5 bg-amber-500 rounded-full inline-block"></span> ตารางอันดับผู้นำ (Leaderboard)
-                </h2>
+            <section id="submitTab" class="tab-content space-y-4 hidden">
+                <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-orange-50/50">
+                    <h2 class="text-base font-black text-slate-800 flex items-center gap-2 mb-4">
+                        <span class="w-1.5 h-4 bg-orange-500 rounded-full inline-block"></span> ส่งผลการวิ่งใหม่
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">ระยะทางที่วิ่งได้ (กิโลเมตร)</label>
+                            <input type="number" step="0.01" id="distanceInput" placeholder="เช่น 5.20" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 transition-all font-semibold">
+                        </div>
 
-                <!-- ตารางแสดงอันดับสไตล์มินิมอลพรีเมียม -->
-                <div class="overflow-hidden rounded-2xl border border-slate-100">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100">
-                                <th class="py-3 px-4 text-center">อันดับ</th>
-                                <th class="py-3 px-2">รายชื่อนักวิ่ง</th>
-                                <th class="py-3 px-4 text-right">ระยะทาง</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 font-semibold text-sm text-slate-700">
-                            <!-- อันดับ 1 (เหรียญทอง) -->
-                            <tr class="hover:bg-orange-50/20 transition-colors">
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xs font-black border border-amber-300 shadow-sm mx-auto">1</span>
-                                </td>
-                                <td class="py-3.5 px-2 flex items-center gap-2">
-                                    <span class="text-base">🏃</span>
-                                    <span>สมชาย สายสปีด</span>
-                                </td>
-                                <td class="py-3.5 px-4 text-right font-bold text-orange-600">65.40 กม.</td>
-                            </tr>
-                            <!-- อันดับ 2 (เหรียญเงิน) -->
-                            <tr class="hover:bg-orange-50/20 transition-colors">
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-black border border-slate-300 shadow-sm mx-auto">2</span>
-                                </td>
-                                <td class="py-3.5 px-2 flex items-center gap-2">
-                                    <span class="text-base">🏃‍♀️</span>
-                                    <span>สมหญิง วิ่งสู้ฟัด</span>
-                                </td>
-                                <td class="py-3.5 px-4 text-right font-bold text-orange-600">58.20 กม.</td>
-                            </tr>
-                            <!-- อันดับ 3 (เหรียญทองแดง) -->
-                            <tr class="hover:bg-orange-50/20 transition-colors">
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="w-6 h-6 rounded-full bg-amber-550/10 text-amber-800 flex items-center justify-center text-xs font-black border border-amber-600/30 shadow-sm mx-auto" style="background-color: #fae8ff; color: #a21caf;">3</span>
-                                </td>
-                                <td class="py-3.5 px-2 flex items-center gap-2">
-                                    <span class="text-base">🏃</span>
-                                    <span>ก้าวไกล ใจเกินร้อย</span>
-                                </td>
-                                <td class="py-3.5 px-4 text-right font-bold text-orange-600">42.19 กม.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">แนบภาพหลักฐานการวิ่ง</label>
+                            <div class="border-2 border-dashed border-slate-200 hover:border-orange-400 rounded-2xl p-5 transition-all bg-slate-50/50 text-center cursor-pointer relative group">
+                                <input type="file" id="fileInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                                <div class="space-y-1">
+                                    <span class="text-2xl inline-block group-hover:scale-110 transition-transform">📸</span>
+                                    <p class="text-xs font-bold text-slate-600" id="fileNameDisplay">เลือกไฟล์รูปภาพหลักฐาน</p>
+                                    <p class="text-[10px] text-slate-400">รองรับไฟล์ JPG, PNG</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="submitBtn" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black py-3.5 rounded-2xl shadow-lg shadow-orange-500/20 hover:opacity-95 transition-all text-sm tracking-wide mt-2">
+                            บันทึกผลการวิ่งสำเร็จ
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-    </main>
 
-    <!-- FIXED BOTTOM NAVIGATION: แถบเมนูลอยติดขอบล่างล็อกสัดส่วน -->
-    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur-md border-t border-slate-100 flex h-20 items-center justify-around shadow-[0_-8px_30px_rgba(0,0,0,0.04)] z-50 px-4 pb-2" id="bottomNav">
-        <!-- ปุ่มไปหน้าโปรไฟล์ -->
-        <button class="flex flex-col items-center justify-center text-orange-600 font-bold transition-all transform scale-105" onclick="switchTab('profile')">
-            <span class="text-xl">👤</span>
-            <span class="text-[11px] mt-0.5 tracking-wider">โปรไฟล์</span>
-        </button>
-        
-        <!-- ปุ่มส่งผลการวิ่ง (เด่นตรงกลางแบบแอปยอดนิยม) -->
-        <button class="flex flex-col items-center justify-center text-slate-400 font-bold -mt-6 bg-gradient-to-tr from-orange-500 to-amber-400 w-14 h-14 rounded-2xl text-white shadow-lg shadow-orange-500/30 transform transition-transform active:scale-95" onclick="switchTab('submit')">
-            <span class="text-2xl">⚡</span>
-        </button>
-        
-        <!-- ปุ่มดูอันดับ Leaderboard -->
-        <button class="flex flex-col items-center justify-center text-slate-400 font-bold transition-all" onclick="switchTab('leaderboard')">
-            <span class="text-xl">📊</span>
-            <span class="text-[11px] mt-0.5 tracking-wider">อันดับ</span>
-        </button>
-    </nav>
-</div>
+            <section id="leaderboardTab" class="tab-content space-y-4 hidden">
+                <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-orange-50/50">
+                    <h2 class="text-base font-black text-slate-800 flex items-center gap-2 mb-4">
+                        <span class="w-1.5 h-4 bg-amber-500 rounded-full inline-block"></span> ตารางอันดับผู้นำ (Leaderboard)
+                    </h2>
+
+                    <div class="overflow-hidden rounded-2xl border border-slate-100">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-wider border-b border-slate-100">
+                                    <th class="py-3 px-3 text-center">อันดับ</th>
+                                    <th class="py-3 px-2">รายชื่อนักวิ่ง</th>
+                                    <th class="py-3 px-3 text-right">ระยะทาง</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-semibold text-xs text-slate-700" id="leaderboardBody">
+                                <tr class="hover:bg-orange-50/10 transition-colors">
+                                    <td class="py-3 px-3 text-center">
+                                        <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-black border border-amber-300 shadow-sm mx-auto">1</span>
+                                    </td>
+                                    <td class="py-3 px-2 flex items-center gap-2">
+                                        <span>🏃</span> <span>สมชาย สายสปีด</span>
+                                    </td>
+                                    <td class="py-3 px-3 text-right font-bold text-orange-600">65.40 กม.</td>
+                                </tr>
+                                <tr class="hover:bg-orange-50/10 transition-colors">
+                                    <td class="py-3 px-3 text-center">
+                                        <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-[10px] font-black border border-slate-300 shadow-sm mx-auto">2</span>
+                                    </td>
+                                    <td class="py-3 px-2 flex items-center gap-2">
+                                        <span>🏃‍♀️</span> <span>สมหญิง วิ่งสู้ฟัด</span>
+                                    </td>
+                                    <td class="py-3 px-3 text-right font-bold text-orange-600">58.20 กม.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur-md border-t border-slate-100 flex h-20 items-center justify-around shadow-[0_-8px_30px_rgba(0,0,0,0.04)] z-50 px-6 pb-2" id="bottomNav">
+            <button class="nav-btn flex flex-col items-center justify-center text-orange-600 font-bold transition-all" onclick="switchTab('profile', this)">
+                <span class="text-xl">👤</span>
+                <span class="text-[10px] mt-0.5 tracking-wider">โปรไฟล์</span>
+            </button>
+            
+            <button class="nav-btn flex flex-col items-center justify-center text-slate-400 font-bold -mt-6 bg-gradient-to-tr from-orange-500 to-amber-400 w-14 h-14 rounded-2xl text-white shadow-lg shadow-orange-500/30 transform transition-all active:scale-95" onclick="switchTab('submit', this)">
+                <span class="text-2xl">⚡</span>
+            </button>
+            
+            <button class="nav-btn flex flex-col items-center justify-center text-slate-400 font-bold transition-all" onclick="switchTab('leaderboard', this)">
+                <span class="text-xl">📊</span>
+                <span class="text-[10px] mt-0.5 tracking-wider">อันดับ</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        function switchTab(tabId, btnElement) {
+            // ซ่อนเนื้อหาทุกแท็บ
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            // เปิดแท็บที่เลือก
+            document.getElementById(tabId + 'Tab').classList.remove('hidden');
+            
+            // รีเซ็ตสีปุ่มเมนูด้านล่าง
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(!btn.classList.contains('bg-gradient-to-tr')) {
+                    btn.classList.remove('text-orange-600');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+            // ไฮไลต์สีปุ่มที่ถูกเลือก
+            if(btnElement && !btnElement.classList.contains('bg-gradient-to-tr')) {
+                btnElement.classList.remove('text-slate-400');
+                btnElement.classList.add('text-orange-600');
+            }
+        }
+
+        // แสดงชื่อไฟล์เมื่อมีการเลือกรูปภาพ
+        document.getElementById('fileInput')?.addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || "เลือกไฟล์รูปภาพหลักฐาน";
+            const display = document.getElementById('fileNameDisplay');
+            if(display) display.innerText = fileName;
+        });
+    </script>
+</body>
+</html>
