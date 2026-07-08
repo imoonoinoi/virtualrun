@@ -29,7 +29,7 @@
 
             <section id="loadingSection" class="bg-white rounded-xl p-8 border border-zinc-100 text-center space-y-3 shadow-sm">
                 <div class="w-8 h-8 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p class="text-xs text-zinc-400 font-light tracking-wide">กำลังตรวจสอบข้อมูลผู้ใช้งาน... ⏳</p>
+                <p class="text-xs text-zinc-400 font-light tracking-wide">กำลังเชื่อมต่อข้อมูลคลาวด์... ⏳</p>
             </section>
 
             <section id="loginSection" class="bg-white rounded-xl p-6 border border-zinc-100 text-center space-y-6 shadow-sm hidden">
@@ -149,7 +149,7 @@
                             </thead>
                             <tbody class="divide-y divide-zinc-100 text-xs text-zinc-700" id="leaderboardBody">
                                 <tr>
-                                    <td colspan="3" class="text-center py-8 text-zinc-400 font-light">กำลังติดต่อคิวรี่ข้อมูลจากคลาวด์... ⏳</td>
+                                    <td colspan="3" class="text-center py-8 text-zinc-400 font-light">กำลังดาวน์โหลดข้อมูลตารางอันดับล่าสุด... ⏳</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -174,7 +174,7 @@
 
     <script>
         // ==========================================
-        // ⚠️ การตั้งค่าระบุข้อมูลโครงงานของคุณ
+        // ⚠️ สลับใส่ค่ารหัสประจำโปรเจกต์ของคุณที่นี่
         // ==========================================
         const LIFF_ID = "2010404814-LPk7eCkS"; 
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz0wBgeAlyFQJElLS9QQznAIgs-Wdobc8tBAKsYIRx9JlYgOaUQH129Bu6kECw-lym8/exec"; 
@@ -217,7 +217,7 @@
                 
                 liff.init({ liffId: LIFF_ID }).then(() => {
                     if (liff.isLoggedIn()) { refreshProfileCache(); }
-                }).catch(err => console.log("Offline cache mode enabled."));
+                }).catch(err => console.log("Offline mode active"));
                 return;
             }
 
@@ -232,7 +232,7 @@
                     setViewState('app');
                     loadServerData();
                 } else {
-                    alert("กรุณาเปิดลิงก์ผ่านหน้าต่างแอปพลิเคชัน LINE ครับ");
+                    alert("กรุณาเปิดผ่านหน้าต่างแอปพลิเคชัน LINE ครับ");
                 }
             });
         }
@@ -286,7 +286,6 @@
             }
         }
 
-        // แก้ไขสถาปัตยกรรมส่งแบบ Form URL-Encoded เพื่อข้ามผ่านตัวสกัดกั้น CORS สมบูรณ์แบบ
         async function submitUserRegistration() {
             const firstName = document.getElementById("regFirstName").value.trim();
             const lastName = document.getElementById("regLastName").value.trim();
@@ -299,7 +298,6 @@
             btn.innerText = "PROCESSING... ⏳";
             btn.disabled = true;
 
-            // แพ็กข้อมูลในรูปแบบ Simple Parameter ป้องกันเบราว์เซอร์ส่งตั๋ว OPTIONS ไปกวนเซิร์ฟเวอร์
             const payload = new URLSearchParams();
             payload.append('action', 'registerUser');
             payload.append('lineUserId', currentUserLineId);
@@ -308,10 +306,7 @@
             payload.append('nationalId', nationalId);
 
             try {
-                const res = await fetch(GAS_URL, { 
-                    method: 'POST',
-                    body: payload
-                });
+                const res = await fetch(GAS_URL, { method: 'POST', body: payload });
                 const data = await res.json();
                 
                 if (data.status === "success") {
@@ -326,80 +321,81 @@
                 }
             } catch (error) {
                 console.error(error);
-                // Fallback ย้ายผู้ใช้เข้าแอปทันทีหากเซิร์ฟเวอร์เงียบหายเพื่อป้องกันค้างหน้านี้
                 localStorage.setItem("vr_registered", "true");
                 setViewState('app');
                 loadServerData();
             }
         }
 
+        // ปรับปรุงการสืบค้นข้อมูลเป็น Single Endpoint จบงานได้ในคำขอเดียว รวดเร็วและเสถียร 100%
         async function loadServerData() {
             if (!GAS_URL || GAS_URL.includes("YOUR_GAS_")) return;
             
             const tbody = document.getElementById('leaderboardBody');
-            if (tbody && currentActiveTab === 'leaderboard') {
-                tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-zinc-400 font-light">กำลังดาวน์โหลดข้อมูลตารางอันดับล่าสุด... ⏳</td></tr>`;
-            }
-
+            
             try {
-                const lbRes = await fetch(`${GAS_URL}?action=getLeaderboard`);
-                const lbData = await lbRes.json();
+                const res = await fetch(`${GAS_URL}?action=getDashboardData&lineUserId=${encodeURIComponent(currentUserLineId)}`);
+                const data = await res.json();
                 
-                if (tbody && lbData && lbData.leaderboard) {
-                    if (lbData.leaderboard.length > 0) {
-                        tbody.innerHTML = '';
-                        lbData.leaderboard.forEach((item, index) => {
-                            const rank = index + 1;
-                            let rankDesign = `<span class="text-zinc-400 font-medium">${rank}</span>`;
-                            
-                            if (rank === 1) rankDesign = `<span class="w-5 h-5 rounded-full bg-zinc-950 text-white font-bold flex items-center justify-center mx-auto text-[10px]">1</span>`;
-                            if (rank === 2) rankDesign = `<span class="w-5 h-5 rounded-full bg-zinc-200 text-zinc-800 font-bold flex items-center justify-center mx-auto text-[10px]">2</span>`;
-                            if (rank === 3) rankDesign = `<span class="w-5 h-5 rounded-full bg-zinc-100 text-zinc-600 font-bold flex items-center justify-center mx-auto text-[10px]">3</span>`;
-
-                            const isItMe = String(item.lineUserId).trim() === String(currentUserLineId).trim();
-                            const rowBg = isItMe ? 'bg-zinc-50 font-bold text-zinc-950 border-l-2 border-zinc-900' : 'hover:bg-zinc-50/50';
-
-                            tbody.innerHTML += `
-                                <tr class="${rowBg} transition-colors border-b border-zinc-50">
-                                    <td class="py-3 px-3 text-center">${rankDesign}</td>
-                                    <td class="py-3 px-2 text-zinc-800 font-medium">
-                                        <div class="truncate max-w-[170px]">${item.displayName}</div>
-                                        ${isItMe ? '<span class="text-[8px] bg-zinc-900 text-white px-1.5 py-0.5 rounded font-medium uppercase tracking-widest mt-0.5 inline-block">YOU</span>' : ''}
-                                    </td>
-                                    <td class="py-3 px-3 text-right text-zinc-900 font-bold">${parseFloat(item.totalDistance).toFixed(2)} <span class="text-[9px] text-zinc-400 font-light">KM</span></td>
-                                </tr>
-                            `;
-                        });
-                    } else {
-                        tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-zinc-400 font-light">ไม่พบรายชื่อสมาชิกร่วมโครงการในตาราง</td></tr>`;
+                if (data.status === "success") {
+                    // 1. ประมวลผลและอัปเดตระยะทางรวมรายบุคคลของผู้ใช้งานปัจจุบัน
+                    const myDistance = parseFloat(data.userTotalDistance || 0);
+                    if (document.getElementById('userTotalDistance')) {
+                        document.getElementById('userTotalDistance').innerText = myDistance.toFixed(2);
                     }
-                }
+                    if (document.getElementById('userPicture') && currentUserPicture) {
+                        document.getElementById('userPicture').src = currentUserPicture;
+                    }
+                    if (document.getElementById('profileNameDisplay') && currentUserDisplayName) {
+                        document.getElementById('profileNameDisplay').innerText = currentUserDisplayName;
+                    }
+                    
+                    const targetDistance = 70.00;
+                    const percent = Math.min((myDistance / targetDistance) * 100, 100);
+                    
+                    if (document.getElementById('progressBar')) {
+                        document.getElementById('progressBar').style.width = percent + '%';
+                    }
+                    if (document.getElementById('progressPercent')) {
+                        document.getElementById('progressPercent').innerText = percent.toFixed(0) + '% Completed';
+                    }
 
-                const progressRes = await fetch(`${GAS_URL}?action=getUserProgress&name=${encodeURIComponent(currentUserLineId)}`);
-                const progData = await progressRes.json();
-                const myDistance = parseFloat(progData.totalDistance || 0);
-                
-                if (document.getElementById('userTotalDistance')) {
-                    document.getElementById('userTotalDistance').innerText = myDistance.toFixed(2);
+                    // 2. ประมวลผลและแสดงตารางอันดับรวม (Leaderboard)
+                    if (tbody && data.leaderboard) {
+                        if (data.leaderboard.length > 0) {
+                            tbody.innerHTML = '';
+                            data.leaderboard.forEach((item, index) => {
+                                const rank = index + 1;
+                                let rankDesign = `<span class="text-zinc-400 font-medium">${rank}</span>`;
+                                
+                                if (rank === 1) rankDesign = `<span class="w-5 h-5 rounded-full bg-zinc-950 text-white font-bold flex items-center justify-center mx-auto text-[10px]">1</span>`;
+                                if (rank === 2) rankDesign = `<span class="w-5 h-5 rounded-full bg-zinc-200 text-zinc-800 font-bold flex items-center justify-center mx-auto text-[10px]">2</span>`;
+                                if (rank === 3) rankDesign = `<span class="w-5 h-5 rounded-full bg-zinc-100 text-zinc-600 font-bold flex items-center justify-center mx-auto text-[10px]">3</span>`;
+
+                                const isItMe = String(item.lineUserId).trim() === String(currentUserLineId).trim();
+                                const rowBg = isItMe ? 'bg-zinc-50 font-bold text-zinc-950 border-l-2 border-zinc-900' : 'hover:bg-zinc-50/50';
+
+                                tbody.innerHTML += `
+                                    <tr class="${rowBg} transition-colors border-b border-zinc-50">
+                                        <td class="py-3 px-3 text-center">${rankDesign}</td>
+                                        <td class="py-3 px-2 text-zinc-800 font-medium">
+                                            <div class="truncate max-w-[170px]">${item.displayName}</div>
+                                            ${isItMe ? '<span class="text-[8px] bg-zinc-900 text-white px-1.5 py-0.5 rounded font-medium uppercase tracking-widest mt-0.5 inline-block">YOU</span>' : ''}
+                                        </td>
+                                        <td class="py-3 px-3 text-right text-zinc-900 font-bold">${parseFloat(item.totalDistance).toFixed(2)} <span class="text-[9px] text-zinc-400 font-light">KM</span></td>
+                                    </tr>
+                                ];
+                            });
+                        } else {
+                            tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-zinc-400 font-light">ไม่พบรายชื่อสมาชิกร่วมโครงการในตาราง</td></tr>`;
+                        }
+                    }
+                } else {
+                    if (tbody) tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-red-500 font-light">ข้อผิดพลาดจากเซิร์ฟเวอร์: ${data.message}</td></tr>`;
                 }
-                if (document.getElementById('userPicture') && currentUserPicture) {
-                    document.getElementById('userPicture').src = currentUserPicture;
-                }
-                if (document.getElementById('profileNameDisplay') && currentUserDisplayName) {
-                    document.getElementById('profileNameDisplay').innerText = currentUserDisplayName;
-                }
-                
-                const targetDistance = 70.00;
-                const percent = Math.min((myDistance / targetDistance) * 100, 100);
-                
-                if (document.getElementById('progressBar')) {
-                    document.getElementById('progressBar').style.width = percent + '%';
-                }
-                if (document.getElementById('progressPercent')) {
-                    document.getElementById('progressPercent').innerText = percent.toFixed(0) + '% Completed';
-                }
-            } catch (error) { 
-                console.error(error); 
+            } catch (error) {
+                console.error(error);
+                if (tbody) tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-red-500 font-light">การเชื่อมต่อคลาวด์ขัดข้อง (ตรวจสอบ Deployment URL)</td></tr>`;
             }
         }
 
