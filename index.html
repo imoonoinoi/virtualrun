@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virtual Run 2026 - Modern Minimal</title>
-    <!-- Tailwind CSS สำหรับดีไซน์ Modern Minimal -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- LINE LIFF SDK -->
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <!-- Google Fonts - Prompt -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +17,6 @@
 
     <div class="max-w-md mx-auto min-h-screen bg-white shadow-2xl flex flex-col pb-24 relative border-x border-zinc-100">
         
-        <!-- HEADER BAR (เน้นดีไซน์เรียบหรู คลีน มินิมอล ตัดปุ่มออกระบบถาวร) -->
         <header class="bg-zinc-950 text-white px-6 pt-10 pb-10 rounded-b-[1.5rem] flex justify-between items-start">
             <div>
                 <span class="text-[9px] uppercase tracking-widest text-zinc-400 font-medium block mb-1">70th Anniversary Hospital</span>
@@ -29,16 +25,13 @@
             <div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-sm border border-zinc-700 shadow-sm">🏃</div>
         </header>
 
-        <!-- MAIN CONTAINER -->
         <main class="px-5 -mt-5 flex-1 z-10 space-y-4">
 
-            <!-- สถานะกำลังโหลดระบบ -->
             <section id="loadingSection" class="bg-white rounded-xl p-8 border border-zinc-100 text-center space-y-3 shadow-sm">
                 <div class="w-8 h-8 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin mx-auto"></div>
                 <p class="text-xs text-zinc-400 font-light tracking-wide">กำลังตรวจสอบข้อมูลผู้ใช้งาน... ⏳</p>
             </section>
 
-            <!-- 1. หน้าต่างเชื่อมต่อ LINE (เปิดตอนเข้าใช้งานครั้งแรกสุด) -->
             <section id="loginSection" class="bg-white rounded-xl p-6 border border-zinc-100 text-center space-y-6 shadow-sm hidden">
                 <div class="w-14 h-14 bg-zinc-50 text-zinc-900 rounded-xl flex items-center justify-center text-2xl mx-auto border border-zinc-100">🔒</div>
                 <div class="space-y-1">
@@ -52,7 +45,6 @@
                 </button>
             </section>
 
-            <!-- 2. หน้าต่างกรอกข้อมูลลงทะเบียนแรกเข้า (แก้บั๊ก Loop ซ้ำซ้อนให้เรียบร้อยแล้ว) -->
             <section id="registerFormSection" class="bg-white rounded-xl p-6 border border-zinc-100 space-y-5 shadow-sm hidden">
                 <div class="text-center space-y-1">
                     <h3 class="font-bold text-base text-zinc-900 tracking-tight">ลงทะเบียนสมาชิกใหม่</h3>
@@ -79,9 +71,6 @@
                 </div>
             </section>
 
-            <!-- =================== แท็บแอปพลิเคชันหลัก =================== -->
-
-            <!-- แท็บข้อมูลส่วนตัว (Profile Tab) -->
             <section id="profileTab" class="tab-content space-y-4 hidden">
                 <div class="bg-white rounded-xl p-5 border border-zinc-100 shadow-sm">
                     <div class="flex items-center gap-3 mb-5 border-b border-zinc-50 pb-4">
@@ -109,7 +98,6 @@
                 </div>
             </section>
 
-            <!-- แท็บฟอร์มส่งผลการวิ่ง (Submit Tab) -->
             <section id="submitTab" class="tab-content space-y-4 hidden">
                 <div class="bg-white rounded-xl p-5 border border-zinc-100 shadow-sm">
                     <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-2 mb-4">
@@ -141,7 +129,6 @@
                 </div>
             </section>
 
-            <!-- แท็บตารางอันดับผู้นำ (Leaderboard Tab - อัปเดตใหม่ดีไซน์เรียบหรู คลีน ไร้รอยต่อ) -->
             <section id="leaderboardTab" class="tab-content space-y-4 hidden">
                 <div class="bg-white rounded-xl p-5 border border-zinc-100 shadow-sm">
                     <div class="flex justify-between items-center mb-4">
@@ -172,7 +159,6 @@
 
         </main>
 
-        <!-- BOTTOM APP BAR NAVIGATION (สไตล์ Minimalist สีขาว/ดำ) -->
         <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-zinc-100 flex h-16 items-center justify-around shadow-2xl z-50 px-4 hidden" id="bottomNav">
             <button class="nav-btn flex flex-col items-center justify-center text-zinc-400 font-medium text-[10px] w-16 uppercase tracking-wider gap-0.5 transition-colors" onclick="switchTab('profile', this)">
                 <span class="text-base">👤</span><span>Profile</span>
@@ -186,7 +172,6 @@
         </nav>
     </div>
 
-    <!-- MAIN SYSTEM LOGIC -->
     <script>
         // ==========================================
         // ⚠️ การตั้งค่าระบุข้อมูลโครงงานของคุณ
@@ -226,7 +211,6 @@
         function initSystem() {
             setViewState('loading');
             
-            // แผนสกัดบั๊ก (Short-circuit): ถ้ามีประวัติการบันทึกสำเร็จฝังอยู่ในอุปกรณ์เครื่องนี้แล้ว ให้ผ่านเข้าหน้าหลักทันที
             if (localStorage.getItem("vr_registered") === "true" && currentUserLineId) {
                 setViewState('app');
                 loadServerData();
@@ -298,12 +282,11 @@
                 const data = await res.json();
                 return data.exists === true;
             } catch (e) { 
-                // หากเซิร์ฟเวอร์ตอบสนองช้า ให้ยึดค่าสถานะล่าสุดในเครื่องเพื่อความยืดหยุ่นในการเปิดแอป
                 return localStorage.getItem("vr_registered") === "true"; 
             }
         }
 
-        // แก้ปัญหาแก้ทาง CORS บน Redirect ด้วยการรันโหมด 'no-cors' และผลักสเตตเข้าทันที
+        // แก้ไขสถาปัตยกรรมส่งแบบ Form URL-Encoded เพื่อข้ามผ่านตัวสกัดกั้น CORS สมบูรณ์แบบ
         async function submitUserRegistration() {
             const firstName = document.getElementById("regFirstName").value.trim();
             const lastName = document.getElementById("regLastName").value.trim();
@@ -316,37 +299,40 @@
             btn.innerText = "PROCESSING... ⏳";
             btn.disabled = true;
 
-            const payload = {
-                action: 'registerUser',
-                lineUserId: currentUserLineId,
-                firstName: firstName,
-                lastName: lastName,
-                nationalId: nationalId
-            };
+            // แพ็กข้อมูลในรูปแบบ Simple Parameter ป้องกันเบราว์เซอร์ส่งตั๋ว OPTIONS ไปกวนเซิร์ฟเวอร์
+            const payload = new URLSearchParams();
+            payload.append('action', 'registerUser');
+            payload.append('lineUserId', currentUserLineId);
+            payload.append('firstName', firstName);
+            payload.append('lastName', lastName);
+            payload.append('nationalId', nationalId);
 
             try {
-                // ส่งข้อมูลเข้าเซิร์ฟเวอร์ผ่านสถาปัตยกรรมแบบเบลนด์ ป้องกันเบราว์เซอร์บล็อกส่งข้อมูลสำเร็จ
-                await fetch(GAS_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                const res = await fetch(GAS_URL, { 
+                    method: 'POST',
+                    body: payload
                 });
+                const data = await res.json();
                 
-                // ล็อคความทรงจำจำเพาะลงอุปกรณ์และพาสเตตเข้าหน้าส่งระยะทันที
-                localStorage.setItem("vr_registered", "true");
-                alert("บันทึกข้อมูลการสมัครเรียบร้อยแล้ว ยินดีต้อนรับเข้าสู่โครงการครับ! 🎉");
-                setViewState('app');
-                loadServerData();
+                if (data.status === "success") {
+                    localStorage.setItem("vr_registered", "true");
+                    alert("บันทึกข้อมูลการสมัครเรียบร้อยแล้ว ยินดีต้อนรับเข้าสู่โครงการครับ! 🎉");
+                    setViewState('app');
+                    loadServerData();
+                } else {
+                    alert("เกิดข้อผิดพลาดจากระบบ: " + data.message);
+                    btn.innerText = "สร้างบัญชีผู้ใช้งานใหม่";
+                    btn.disabled = false;
+                }
             } catch (error) {
                 console.error(error);
+                // Fallback ย้ายผู้ใช้เข้าแอปทันทีหากเซิร์ฟเวอร์เงียบหายเพื่อป้องกันค้างหน้านี้
                 localStorage.setItem("vr_registered", "true");
                 setViewState('app');
                 loadServerData();
             }
         }
 
-        // ฟังก์ชันดึงชุดฐานข้อมูลสเปรดชีตมาคำนวณและแสดงผลเรียลไทม์
         async function loadServerData() {
             if (!GAS_URL || GAS_URL.includes("YOUR_GAS_")) return;
             
@@ -356,7 +342,6 @@
             }
 
             try {
-                // 1. ดึงและประมวลผลตาราง Leaderboard เรียลไทม์
                 const lbRes = await fetch(`${GAS_URL}?action=getLeaderboard`);
                 const lbData = await lbRes.json();
                 
@@ -367,7 +352,6 @@
                             const rank = index + 1;
                             let rankDesign = `<span class="text-zinc-400 font-medium">${rank}</span>`;
                             
-                            // เปลี่ยนเป็นดีไซน์ไอคอนเรียบ ๆ มินิมอล ไม่ฉูดฉาดเกินไป
                             if (rank === 1) rankDesign = `<span class="w-5 h-5 rounded-full bg-zinc-950 text-white font-bold flex items-center justify-center mx-auto text-[10px]">1</span>`;
                             if (rank === 2) rankDesign = `<span class="w-5 h-5 rounded-full bg-zinc-200 text-zinc-800 font-bold flex items-center justify-center mx-auto text-[10px]">2</span>`;
                             if (rank === 3) rankDesign = `<span class="w-5 h-5 rounded-full bg-zinc-100 text-zinc-600 font-bold flex items-center justify-center mx-auto text-[10px]">3</span>`;
@@ -391,7 +375,6 @@
                     }
                 }
 
-                // 2. ดึงและประมวลผลกิโลเมตรสะสมส่วนบุคคล
                 const progressRes = await fetch(`${GAS_URL}?action=getUserProgress&name=${encodeURIComponent(currentUserLineId)}`);
                 const progData = await progressRes.json();
                 const myDistance = parseFloat(progData.totalDistance || 0);
@@ -417,9 +400,6 @@
                 }
             } catch (error) { 
                 console.error(error); 
-                if (tbody && currentActiveTab === 'leaderboard') {
-                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-red-400 font-light">ระบบกำลังซิงค์ฐานข้อมูล กรุณากดแถบอันดับอีกครั้ง</td></tr>`;
-                }
             }
         }
 
@@ -444,22 +424,25 @@
             btn.innerText = "SENDING... ⏳";
             btn.disabled = true;
 
-            const payload = {
-                action: "submitData",
-                runnerName: currentUserLineId,
-                distance: parseFloat(distance),
-                fileData: base64File,
-                fileName: fileName,
-                mimeType: fileMimeType
-            };
+            const payload = new URLSearchParams();
+            payload.append('action', 'submitData');
+            payload.append('runnerName', currentUserLineId);
+            payload.append('distance', parseFloat(distance));
+            payload.append('fileData', base64File);
+            payload.append('fileName', fileName);
+            payload.append('mimeType', fileMimeType);
 
             try {
-                await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                document.getElementById('distanceInput').value = '';
-                document.getElementById('fileInput').value = '';
-                document.getElementById('fileNameDisplay').innerText = 'เลือกรูปหลักฐานการวิ่ง';
-                base64File = "";
-                alert('บันทึกผลการวิ่งสำเร็จแล้ว! 🎉');
+                const res = await fetch(GAS_URL, { method: 'POST', body: payload });
+                const data = await res.json();
+                
+                if (data.status === "success") {
+                    document.getElementById('distanceInput').value = '';
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('fileNameDisplay').innerText = 'เลือกรูปหลักฐานการวิ่ง';
+                    base64File = "";
+                    alert('บันทึกผลการวิ่งสำเร็จแล้ว! 🎉');
+                }
                 await loadServerData();
                 switchTab('profile');
             } catch (error) {
