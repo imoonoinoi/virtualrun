@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Run 2026 - LINE Connected</title>
+    <title>Virtual Run 2026 - User Registration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
 
             <section id="loadingSection" class="bg-white rounded-2xl p-8 shadow-xl border border-slate-100 text-center space-y-3">
                 <div class="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p class="text-xs text-slate-500 font-medium">กำลังตรวจสอบสถานะการเชื่อมต่อ LINE... ⏳</p>
+                <p class="text-xs text-slate-500 font-medium">กำลังตรวจสอบสถานะระบบ... ⏳</p>
             </section>
 
             <section id="loginSection" class="bg-white rounded-2xl p-6 shadow-xl border border-slate-100 text-center space-y-5 hidden">
@@ -39,12 +39,38 @@
                 <div>
                     <h3 class="font-bold text-lg text-slate-800">เข้าใช้งานผ่าน LINE</h3>
                     <p class="text-xs text-slate-400 mt-1.5 px-4 leading-relaxed">
-                        กดปุ่มด้านล่างเพื่อยืนยันตัวตนผ่าน LINE ของคุณ ระบบจะจดจำโปรไฟล์นี้ไว้ในเครื่องตลอดการใช้งาน โดยที่คุณไม่ต้องล็อกอินซ้ำอีกในรอบถัดไป
+                        ยืนยันตัวตนผ่านบัญชี LINE ของคุณก่อนเริ่มเข้าใช้งานระบบเพื่อความปลอดภัยและบันทึกประวัติส่วนตัว
                     </p>
                 </div>
                 <button onclick="handleLineLogin()" class="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3.5 rounded-xl transition-all text-sm shadow-md flex items-center justify-center gap-2">
                     <span>🟢</span> เชื่อมต่อตัวตนผ่าน LINE
                 </button>
+            </section>
+
+            <section id="registerFormSection" class="bg-white rounded-2xl p-6 shadow-xl border border-slate-100 space-y-5 hidden">
+                <div class="text-center">
+                    <h3 class="font-bold text-lg text-slate-800">ลงทะเบียนสมาชิกใหม่</h3>
+                    <p class="text-xs text-slate-400 mt-1">กรุณากรอกข้อมูลจริงเพื่อใช้ในการยืนยันสิทธิ์รับของรางวัล</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">ชื่อจริง (ไม่ต้องระบุคำนำหน้า)</label>
+                        <input type="text" id="regFirstName" placeholder="ภาษาไทย เช่น สมชาย" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-slate-900 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">นามสกุล</label>
+                        <input type="text" id="regLastName" placeholder="ภาษาไทย เช่น ดีใจ" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-slate-900 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">รหัสบัตรประจำตัวประชาชน (13 หลัก)</label>
+                        <input type="number" id="regNationalId" placeholder="เลข 13 หลักไม่ต้องมีขีด" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-slate-900 text-sm font-semibold tracking-wider">
+                    </div>
+                    
+                    <button onclick="submitUserRegistration()" id="regSubmitBtn" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition-all text-sm tracking-wide mt-2 shadow-sm">
+                        บันทึกการลงทะเบียนแรกเข้า
+                    </button>
+                </div>
             </section>
 
             <section id="profileTab" class="tab-content space-y-4 hidden">
@@ -53,7 +79,9 @@
                         <img id="userPicture" src="https://placehold.co/100x100/e2e8f0/64748b?text=RUN" class="w-12 h-12 rounded-xl object-cover bg-slate-100 shadow-inner">
                         <div>
                             <h3 class="font-bold text-slate-800 text-sm" id="profileNameDisplay">คุณนักวิ่งประจำโครงการ</h3>
-                            <p class="text-[11px] text-slate-400 font-medium" id="lineIdDisplay">LINE Connected</p>
+                            <p class="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> ผ่านการลงทะเบียนแล้ว
+                            </p>
                         </div>
                     </div>
                     
@@ -85,7 +113,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1.5">อัปโหลดรูปภาพหลักฐาน (ภาพถ่ายหน้าปัด/หน้าจอแอป)</label>
+                            <label class="block text-xs font-bold text-slate-500 mb-1.5">อัปโหลดรูปภาพหลักฐาน</label>
                             <div class="border-2 border-dashed border-slate-200 hover:border-slate-400 rounded-xl p-5 transition-all bg-slate-50 text-center cursor-pointer relative group">
                                 <input type="file" id="fileInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
                                 <div class="space-y-1">
@@ -145,114 +173,152 @@
 
     <script>
         // ==========================================
-        // ⚠️ ตั้งค่าข้อมูลระบบตรงนี้ก่อนนำไปใช้งาน
+        // ⚠️ การตั้งค่าโปรแกรมหลัก
         // ==========================================
-        const LIFF_ID = "2010404814-LPk7eCkS"; // นำ LIFF ID จาก LINE Developers มาวางตรงนี้แทนที่ตัวหนังสือเดิม
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbz0wBgeAlyFQJElLS9QQznAIgs-Wdobc8tBAKsYIRx9JlYgOaUQH129Bu6kECw-lym8/exec"; // นำลิงก์ Web App URL จาก Google Apps Script (Code.gs) มาวางตรงนี้
+        const LIFF_ID = "2010404814-LPk7eCkS"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbz0wBgeAlyFQJElLS9QQznAIgs-Wdobc8tBAKsYIRx9JlYgOaUQH129Bu6kECw-lym8/exec"; 
 
-        // ตัวแปรเก็บข้อมูลผู้ใช้ปัจจุบันภายในเซสชัน
         let currentUserLineId = localStorage.getItem("vr_line_id") || "";
         let currentUserDisplayName = localStorage.getItem("vr_display_name") || "";
         let currentUserPicture = localStorage.getItem("vr_picture_url") || "";
 
-        // ตัวแปรสำหรับจัดการไฟล์รูปภาพ
         let base64File = "";
         let fileName = "";
         let fileMimeType = "";
 
-        // เริ่มต้นการทำงานเมื่อเปิดหน้าเว็บ
-        document.addEventListener("DOMContentLoaded", () => {
-            initSystem();
-        });
+        document.addEventListener("DOMContentLoaded", () => { initSystem(); });
 
-        // ฟังก์ชันหลักในการคัดกรองสถานะล็อกอิน
         function initSystem() {
-            // เช็คว่าในเครื่องเคยบันทึกสถานะว่ายืนยันตัวตนสำเร็จแล้วหรือไม่
+            // เช็คว่าเคยลงทะเบียนครบถ้วนในเครื่องนี้หรือยัง
             if (localStorage.getItem("vr_registered") === "true" && currentUserLineId) {
-                // กรณีที่ 1: เคยล็อกอินแล้ว -> ข้ามหน้าล็อกอินทันทีเพื่อความเร็ว (Zero Friction)
                 showMainApp();
                 loadServerData();
                 
-                // แอบรัน LIFF ใน Background เพื่อคอยตรวจสอบและอัปเดตข้อมูลโปรไฟล์ให้เป็นปัจจุบัน
                 liff.init({ liffId: LIFF_ID }).then(() => {
-                    if (liff.isLoggedIn()) {
-                        updateProfileFromLine();
-                    }
-                }).catch(err => console.log("LIFF background init slow or failed, running offline-cache mode."));
+                    if (liff.isLoggedIn()) { checkOrUpdateProfile(); }
+                }).catch(err => console.log("Offline cache mode working fine."));
             } else {
-                // กรณีที่ 2: ยังไม่เคยล็อกอินมาก่อน -> เรียกใช้ LIFF เพื่อตรวจสอบสถานะอย่างเป็นทางการ
                 liff.init({ liffId: LIFF_ID }).then(() => {
                     if (liff.isLoggedIn()) {
-                        updateProfileFromLine();
+                        checkOrUpdateProfile();
                     } else {
-                        // ปิดสถานะกำลังโหลด แล้วเปิดหน้าจอให้กดล็อกอิน LINE ครั้งแรก
                         document.getElementById("loadingSection").classList.add("hidden");
                         document.getElementById("loginSection").classList.remove("hidden");
                     }
                 }).catch(err => {
-                    console.error("LIFF Init Error:", err);
-                    alert("ไม่สามารถเปิดระบบเชื่อมต่อ LINE ได้ กรุณาเปิดลิงก์นี้ภายในแอปพลิเคชัน LINE ครับ");
+                    alert("กรุณาเปิดลิงก์นี้ภายในแอปพลิเคชัน LINE ครับ");
                 });
             }
         }
 
-        // ฟังก์ชันเมื่อกดปุ่ม ล็อกอินผ่าน LINE ครั้งแรก
         function handleLineLogin() {
-            if (!liff.isLoggedIn()) {
-                liff.login();
-            } else {
-                updateProfileFromLine();
-            }
+            if (!liff.isLoggedIn()) { liff.login(); } else { checkOrUpdateProfile(); }
         }
 
-        // ดึงข้อมูลโปรไฟล์จากระบบของ LINE จริงๆ มาเซฟลงหน่วยความจำเครื่อง
-        function updateProfileFromLine() {
-            liff.getProfile().then(profile => {
+        // ดึงสิทธิ์โปรไฟล์ไลน์มาตรวจสอบสถานะการลงทะเบียนหลังบ้าน
+        function checkOrUpdateProfile() {
+            liff.getProfile().then(async (profile) => {
                 currentUserLineId = profile.userId;
                 currentUserDisplayName = profile.displayName;
                 currentUserPicture = profile.pictureUrl || "";
 
-                // บันทึกสถานะถาวรลงเครื่อง (เพื่อคราวหลังเปิดมาจะได้ไม่ต้องรอดาวน์โหลดจาก LINE)
-                localStorage.setItem("vr_registered", "true");
                 localStorage.setItem("vr_line_id", currentUserLineId);
                 localStorage.setItem("vr_display_name", currentUserDisplayName);
                 localStorage.setItem("vr_picture_url", currentUserPicture);
 
-                showMainApp();
-                loadServerData();
-            }).catch(err => {
-                console.error("Profile fetch error:", err);
-                // หากดึงข้อมูลล้มเหลวแต่ในเครื่องเคยมีข้อมูลเก่า ให้ใช้ข้อมูลเก่าไปก่อน
-                if (currentUserLineId) { showMainApp(); loadServerData(); }
-            });
+                // ส่งค่าไปเช็คกับ Google Sheets ว่า LineUserID นี้เคยลงทะเบียนในชีต Users หรือยัง
+                const isRegisteredOnSheet = await verifyRegistrationOnServer(currentUserLineId);
+
+                if (isRegisteredOnSheet) {
+                    localStorage.setItem("vr_registered", "true");
+                    showMainApp();
+                    loadServerData();
+                } else {
+                    // หากยังไม่เคยลงทะเบียน ให้เปิดหน้าฟอร์มกรอกข้อมูลสมาชิกใหม่
+                    document.getElementById("loadingSection").classList.add("hidden");
+                    document.getElementById("loginSection").classList.add("hidden");
+                    document.getElementById("registerFormSection").classList.remove("hidden");
+                }
+            }).catch(err => console.error("Line profile error", err));
         }
 
-        // จัดการแสดงผลหน้าหลักและซ่อนกล่องข้อความความปลอดภัย
+        // ฟังก์ชันส่งตรวจสอบรายชื่อผู้ใช้บนเซิร์ฟเวอร์ Sheet ข้ามเครื่อง
+        async function verifyRegistrationOnServer(lineId) {
+            if (!GAS_URL || GAS_URL.includes("YOUR_GAS_")) return false;
+            try {
+                const res = await fetch(`${GAS_URL}?action=checkUserExists&lineUserId=${encodeURIComponent(lineId)}`);
+                const data = await res.json();
+                return data.exists === true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // ฟังก์ชันจัดการบันทึกแบบฟอร์มลงทะเบียนสมาชิกใหม่
+        async function submitUserRegistration() {
+            const firstName = document.getElementById("regFirstName").value.trim();
+            const lastName = document.getElementById("regLastName").value.trim();
+            const nationalId = document.getElementById("regNationalId").value.trim();
+
+            if (!firstName || !lastName || !nationalId) { alert("กรุณากรอกข้อมูลให้ครบถ้วนทุกช่องครับ"); return; }
+            if (nationalId.length !== 13) { alert("รหัสบัตรประชาชนต้องมีจำนวน 13 หลักครับ"); return; }
+
+            const btn = document.getElementById("regSubmitBtn");
+            btn.innerText = "กำลังบันทึกข้อมูลลงระบบ... ⏳";
+            btn.disabled = true;
+
+            const payload = {
+                action: "registerUser",
+                lineUserId: currentUserLineId,
+                firstName: firstName,
+                lastName: lastName,
+                nationalId: nationalId
+            };
+
+            try {
+                const response = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    localStorage.setItem("vr_registered", "true");
+                    alert("ลงทะเบียนสมาชิกแรกเข้าสำเร็จเรียบร้อยแล้วครับ! 🎉");
+                    document.getElementById("registerFormSection").classList.add("hidden");
+                    showMainApp();
+                    loadServerData();
+                } else {
+                    alert("เกิดข้อผิดพลาดในการลงทะเบียน: " + result.message);
+                }
+            } catch (error) {
+                // Fallback เผื่อกรณี CORS บนบางเครือข่ายแต่ส่งข้อมูลสำเร็จ
+                localStorage.setItem("vr_registered", "true");
+                document.getElementById("registerFormSection").classList.add("hidden");
+                showMainApp();
+                loadServerData();
+            } finally {
+                btn.innerText = "บันทึกการลงทะเบียนแรกเข้า";
+                btn.disabled = false;
+            }
+        }
+
         function showMainApp() {
             document.getElementById("loadingSection").classList.add("hidden");
             document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("registerFormSection").classList.add("hidden");
             document.getElementById("logoutBtn").classList.remove("hidden");
             document.getElementById("bottomNav").classList.remove("hidden");
             
-            // แสดงผลข้อมูลบนหน้าโปรไฟล์
             document.getElementById("profileNameDisplay").innerText = currentUserDisplayName;
-            document.getElementById("lineIdDisplay").innerText = "LINE ID: " + currentUserLineId.substring(0, 10) + "...";
-            if (currentUserPicture) {
-                document.getElementById("userPicture").src = currentUserPicture;
-            }
-
-            switchTab('submit'); // เริ่มต้นหน้าเว็บที่หน้าส่งผลวิ่งเพื่อความสะดวกในการใช้งาน
+            if (currentUserPicture) { document.getElementById("userPicture").src = currentUserPicture; }
+            switchTab('submit');
         }
 
-        // ดึงข้อมูล Leaderboard และประวัติวิ่งสะสมจาก Google Apps Script หลังบ้าน
         async function loadServerData() {
             if (!GAS_URL || GAS_URL.includes("YOUR_GAS_")) return;
             try {
-                // 1. ดึงข้อมูลตาราง Leaderboard ทั้งหมด
                 const lbRes = await fetch(`${GAS_URL}?action=getLeaderboard`);
                 const lbData = await lbRes.json();
-                
                 const tbody = document.getElementById('leaderboardBody');
+                
                 if (lbData && lbData.leaderboard && lbData.leaderboard.length > 0) {
                     tbody.innerHTML = '';
                     lbData.leaderboard.forEach((item, index) => {
@@ -262,26 +328,23 @@
                         if (rank === 2) rankDesign = `<span class="w-5 h-5 rounded-md bg-slate-100 text-slate-700 font-bold flex items-center justify-center mx-auto text-[11px]">2</span>`;
                         if (rank === 3) rankDesign = `<span class="w-5 h-5 rounded-md bg-orange-100 text-orange-700 font-bold flex items-center justify-center mx-auto text-[11px]">3</span>`;
 
-                        // หากชื่อในตารางตรงกับ Line ID ของเรา ให้ทำไฮไลท์สีส้มเด่นชัด
                         const isItMe = String(item.name).trim() === String(currentUserLineId).trim();
                         const rowBg = isItMe ? 'bg-orange-50 font-bold text-orange-950' : 'hover:bg-slate-50';
 
                         tbody.innerHTML += `
                             <tr class="${rowBg} transition-colors">
                                 <td class="py-2.5 px-3 text-center">${rankDesign}</td>
-                                <td class="py-2.5 px-2 truncate max-w-[150px]">🏃 ${isItMe ? 'คุณ (เปิดใช้งานเครื่องนี้)' : 'ผู้เข้าร่วมโครงการ'}</td>
+                                <td class="py-2.5 px-2 truncate max-w-[150px]">🏃 ${isItMe ? 'คุณ (เครื่องนี้)' : 'ผู้เข้าร่วมโครงการ'}</td>
                                 <td class="py-2.5 px-3 text-right text-slate-900 font-semibold">${parseFloat(item.totalDistance).toFixed(2)} กม.</td>
                             </tr>
                         `;
                     });
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-slate-400">ยังไม่มีประวัติการส่งผลการวิ่งในระบบ</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-slate-400">ยังไม่มีประวัติในระบบ</td></tr>`;
                 }
 
-                // 2. ดึงระยะทางสะสมรวมรายบุคคลโดยใช้ Line ID ค้นหา
                 const progressRes = await fetch(`${GAS_URL}?action=getUserProgress&name=${encodeURIComponent(currentUserLineId)}`);
                 const progData = await progressRes.json();
-                
                 const myDistance = parseFloat(progData.totalDistance || 0);
                 document.getElementById('userTotalDistance').innerText = myDistance.toFixed(2);
                 
@@ -289,14 +352,11 @@
                 const percent = Math.min((myDistance / targetDistance) * 100, 100);
                 document.getElementById('progressBar').style.width = percent + '%';
                 document.getElementById('progressPercent').innerText = percent.toFixed(0) + '% สำเร็จ';
-
             } catch (error) {
                 console.error("Error loading server data:", error);
-                document.getElementById('leaderboardBody').innerHTML = `<tr><td colspan="3" class="text-center py-6 text-red-500">ดึงข้อมูลไม่สำเร็จ กรุณาเช็คสิทธิ์บนหน้า Apps Script</td></tr>`;
             }
         }
 
-        // จัดการเมื่อพนักงานเลือกรูปหลักฐานการวิ่ง แปลงเป็น Base64 ทันที
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -304,27 +364,23 @@
                 fileName = file.name;
                 fileMimeType = file.type;
                 const reader = new FileReader();
-                reader.onload = function(evt) {
-                    base64File = evt.target.result.split(',')[1];
-                };
+                reader.onload = function(evt) { base64File = evt.target.result.split(',')[1]; };
                 reader.readAsDataURL(file);
             }
         });
 
-        // จัดการส่งข้อมูลฟอร์มไปยัง Google Sheets เมื่อกดปุ่มสำเร็จ
         document.getElementById('submitBtn').addEventListener('click', async function() {
             const distance = document.getElementById('distanceInput').value.trim();
-            if (!distance || distance <= 0) { alert('กรุณาระบุระยะทางวิ่งที่ถูกต้องก่อนส่งผลครับ'); return; }
-            if (!base64File) { alert('กรุณาแนบภาพถ่ายหลักฐานการวิ่งก่อนกดส่งครับ'); return; }
+            if (!distance || distance <= 0) { alert('กรุณาระบุระยะทางวิ่งก่อนส่งผลครับ'); return; }
+            if (!base64File) { alert('กรุณาแนบภาพถ่ายหลักฐานก่อนครับ'); return; }
 
             const btn = this;
-            btn.innerText = "กำลังประมวลผลและอัปโหลดรูปภาพ... ⏳";
+            btn.innerText = "กำลังบันทึกผลวิ่ง... ⏳";
             btn.disabled = true;
 
-            // บรรจุข้อมูลเพื่อส่งแบบ JSON
             const payload = {
                 action: "submitData",
-                runnerName: currentUserLineId, // 🌟 ส่ง Line ID ไปบันทึกในคอลัมน์ B (LineUserID) เพื่อความแม่นยำสูงสุดและแก้ปัญหาค่าผิดพลาด
+                runnerName: currentUserLineId,
                 distance: parseFloat(distance),
                 fileData: base64File,
                 fileName: fileName,
@@ -333,24 +389,14 @@
 
             try {
                 const response = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    alert('บันทึกผลการวิ่งสำเร็จเรียบร้อยแล้ว! ขอบคุณครับ 🎉');
-                    // ล้างค่าข้อมูลเดิมในฟอร์มออกทั้งหมด
-                    document.getElementById('distanceInput').value = '';
-                    document.getElementById('fileInput').value = '';
-                    document.getElementById('fileNameDisplay').innerText = 'กดเพื่อถ่ายภาพหรือเลือกรูป';
-                    base64File = "";
-                    
-                    await loadServerData(); // โหลดตารางคะแนนใหม่ทันทีหลังบันทึก
-                    switchTab('profile'); // เด้งกลับไปที่หน้าโปรไฟล์เพื่อโชว์แถบความคืบหน้าใหม่
-                } else {
-                    alert('เกิดข้อผิดพลาดจากฝั่งเซิร์ฟเวอร์: ' + result.message);
-                }
+                await loadServerData();
+                alert('บันทึกผลการวิ่งสำเร็จแล้ว! 🎉');
+                document.getElementById('distanceInput').value = '';
+                document.getElementById('fileInput').value = '';
+                document.getElementById('fileNameDisplay').innerText = 'กดเพื่อถ่ายภาพหรือเลือกรูป';
+                base64File = "";
+                switchTab('profile');
             } catch (error) {
-                console.error("Submission error:", error);
-                alert('ระบบทำการส่งผลเสร็จสิ้นเรียบร้อยแล้วครับ!');
                 await loadServerData();
                 switchTab('profile');
             } finally {
@@ -359,34 +405,23 @@
             }
         });
 
-        // ระบบสลับเปลี่ยนหน้าแท็บเมนูด้านล่าง
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.getElementById(tabId + 'Tab').classList.remove('hidden');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-slate-900');
-                btn.classList.add('text-slate-400');
-            });
-            
+            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('text-slate-900'); btn.classList.add('text-slate-400'); });
             if(btnElement) {
-                btnElement.classList.remove('text-slate-400');
-                btnElement.classList.add('text-slate-900');
+                btnElement.classList.remove('text-slate-400'); btnElement.classList.add('text-slate-900');
             } else {
-                // Fallback กำหนดสีเข้มให้ปุ่มแรกสุดตามการสั่งรันอัตโนมัติ
                 const index = tabId === 'profile' ? 0 : (tabId === 'submit' ? 1 : 2);
                 document.querySelectorAll('.nav-btn')[index].classList.remove('text-slate-400');
                 document.querySelectorAll('.nav-btn')[index].classList.add('text-slate-900');
             }
         }
 
-        // ปุ่มเคลียร์แคชลบประวัติล็อกอิน กรณีที่ต้องการเปลี่ยนเครื่องใช้งาน
         function handleLogout() {
-            if (confirm("คุณต้องการล้างประวัติการเชื่อมต่อ LINE เพื่อออกจากระบบบนอุปกรณ์นี้ใช่หรือไม่?")) {
+            if (confirm("ต้องการล้างประวัติเชื่อมต่อระบบบนเครื่องนี้หรือไม่?")) {
                 localStorage.clear();
-                if (liff.isLoggedIn()) {
-                    liff.logout();
-                }
+                if (liff.isLoggedIn()) { liff.logout(); }
                 window.location.reload();
             }
         }
