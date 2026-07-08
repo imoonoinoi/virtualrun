@@ -327,7 +327,6 @@
             }
         }
 
-        // ปรับปรุงการสืบค้นข้อมูลเป็น Single Endpoint จบงานได้ในคำขอเดียว รวดเร็วและเสถียร 100%
         async function loadServerData() {
             if (!GAS_URL || GAS_URL.includes("YOUR_GAS_")) return;
             
@@ -383,8 +382,7 @@
                                             ${isItMe ? '<span class="text-[8px] bg-zinc-900 text-white px-1.5 py-0.5 rounded font-medium uppercase tracking-widest mt-0.5 inline-block">YOU</span>' : ''}
                                         </td>
                                         <td class="py-3 px-3 text-right text-zinc-900 font-bold">${parseFloat(item.totalDistance).toFixed(2)} <span class="text-[9px] text-zinc-400 font-light">KM</span></td>
-                                    </tr>
-                                ];
+                                    </tr>`;
                             });
                         } else {
                             tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-zinc-400 font-light">ไม่พบรายชื่อสมาชิกร่วมโครงการในตาราง</td></tr>`;
