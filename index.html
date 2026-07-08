@@ -22,24 +22,22 @@
                 <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">70th Anniversary Hospital</span>
                 <h1 class="text-xl font-bold tracking-tight">VIRTUAL RUN <span class="text-orange-500 font-black">2026</span></h1>
             </div>
-            <button id="logoutBtn" onclick="handleLogout()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 transition-all hidden">
-                ออกจากระบบ 🚪
-            </button>
+            <div class="text-lg">🏃‍♂️🏅</div>
         </header>
 
         <main class="px-4 -mt-6 flex-1 z-10 space-y-4">
 
             <section id="loadingSection" class="bg-white rounded-2xl p-8 shadow-xl border border-slate-100 text-center space-y-3">
                 <div class="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p class="text-xs text-slate-500 font-medium">กำลังตรวจสอบสถานะระบบ... ⏳</p>
+                <p class="text-xs text-slate-500 font-medium">กำลังตรวจสอบสถานะการลงทะเบียน... ⏳</p>
             </section>
 
             <section id="loginSection" class="bg-white rounded-2xl p-6 shadow-xl border border-slate-100 text-center space-y-5 hidden">
-                <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-sm">🏃‍♂️</div>
+                <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-sm">🔐</div>
                 <div>
                     <h3 class="font-bold text-lg text-slate-800">เข้าใช้งานผ่าน LINE</h3>
                     <p class="text-xs text-slate-400 mt-1.5 px-4 leading-relaxed">
-                        ยืนยันตัวตนผ่านบัญชี LINE ของคุณก่อนเริ่มเข้าใช้งานระบบเพื่อความปลอดภัยและบันทึกประวัติส่วนตัว
+                        ยืนยันตัวตนผ่านบัญชี LINE ของคุณก่อนเริ่มเข้าใช้งานระบบเพื่อบันทึกประวัติส่วนตัว
                     </p>
                 </div>
                 <button onclick="handleLineLogin()" class="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3.5 rounded-xl transition-all text-sm shadow-md flex items-center justify-center gap-2">
@@ -50,7 +48,7 @@
             <section id="registerFormSection" class="bg-white rounded-2xl p-6 shadow-xl border border-slate-100 space-y-5 hidden">
                 <div class="text-center">
                     <h3 class="font-bold text-lg text-slate-800">ลงทะเบียนสมาชิกใหม่</h3>
-                    <p class="text-xs text-slate-400 mt-1">กรุณากรอกข้อมูลจริงเพื่อใช้ในการยืนยันสิทธิ์รับของรางวัล</p>
+                    <p class="text-xs text-slate-400 mt-1">กรุณากรอกข้อมูลจริงเพื่อใช้ผูกข้อมูลระบบหลังบ้าน</p>
                 </div>
                 
                 <div class="space-y-4">
@@ -80,7 +78,7 @@
                         <div>
                             <h3 class="font-bold text-slate-800 text-sm" id="profileNameDisplay">คุณนักวิ่งประจำโครงการ</h3>
                             <p class="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> สมาชิกVirtual Run แล้ว
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> เชื่อมต่อระบบสมาชิกเรียบร้อย
                             </p>
                         </div>
                     </div>
@@ -95,7 +93,7 @@
                     </div>
                     <div class="flex justify-between text-[11px] font-semibold text-slate-400 mt-2.5">
                         <span id="progressPercent">0% สำเร็จ</span>
-                        <span class="text-orange-500">สู้ๆ ครับ อีกนิดเดียว! 🔥</span>
+                        <span class="text-orange-500">ตรวจสอบระยะทางสะสมล่าสุด 🎯</span>
                     </div>
                 </div>
             </section>
@@ -133,9 +131,12 @@
 
             <section id="leaderboardTab" class="tab-content space-y-4 hidden">
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-                    <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2 mb-4">
-                        <span class="w-1 h-3 bg-slate-900 rounded-full inline-block"></span> อันดับนักวิ่งยอดเยี่ยม (Leaderboard)
-                    </h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <span class="w-1 h-3 bg-slate-900 rounded-full inline-block"></span> ตารางอันดับนักวิ่ง (Real-time)
+                        </h2>
+                        <span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded-full">อัปเดตสด 🟢</span>
+                    </div>
 
                     <div class="overflow-hidden rounded-xl border border-slate-100">
                         <table class="w-full text-left border-collapse">
@@ -159,10 +160,10 @@
         </main>
 
         <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-slate-100 flex h-16 items-center justify-around shadow-lg z-50 px-4 hidden" id="bottomNav">
-            <button class="nav-btn flex flex-col items-center justify-center text-slate-900 font-bold text-[11px] w-16" onclick="switchTab('profile', this)">
+            <button class="nav-btn flex flex-col items-center justify-center text-slate-400 font-bold text-[11px] w-16" onclick="switchTab('profile', this)">
                 <span class="text-lg">👤</span><span>โปรไฟล์</span>
             </button>
-            <button class="nav-btn flex flex-col items-center justify-center text-slate-400 font-bold text-[11px] w-16" onclick="switchTab('submit', this)">
+            <button class="nav-btn flex flex-col items-center justify-center text-slate-900 font-bold text-[11px] w-16" onclick="switchTab('submit', this)">
                 <span class="text-lg">⚡</span><span>ส่งผลวิ่ง</span>
             </button>
             <button class="nav-btn flex flex-col items-center justify-center text-slate-400 font-bold text-[11px] w-16" onclick="switchTab('leaderboard', this)">
@@ -173,7 +174,7 @@
 
     <script>
         // ==========================================
-        // ⚠️ การตั้งค่าโปรแกรมหลัก (ระบุข้อมูลของคุณ)
+        // ⚠️ การตั้งค่าโปรแกรมหลัก (ระบุข้อมูลของคุณให้ถูกต้อง)
         // ==========================================
         const LIFF_ID = "2010404814-LPk7eCkS"; 
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz0wBgeAlyFQJElLS9QQznAIgs-Wdobc8tBAKsYIRx9JlYgOaUQH129Bu6kECw-lym8/exec"; 
@@ -194,7 +195,6 @@
             document.getElementById("loadingSection").classList.add("hidden");
             document.getElementById("loginSection").classList.add("hidden");
             document.getElementById("registerFormSection").classList.add("hidden");
-            document.getElementById("logoutBtn").classList.add("hidden");
             document.getElementById("bottomNav").classList.add("hidden");
             
             if (state === 'loading') {
@@ -204,7 +204,6 @@
             } else if (state === 'register') {
                 document.getElementById("registerFormSection").classList.remove("hidden");
             } else if (state === 'app') {
-                document.getElementById("logoutBtn").classList.remove("hidden");
                 document.getElementById("bottomNav").classList.remove("hidden");
                 switchTab(currentActiveTab);
             }
@@ -212,23 +211,21 @@
 
         function initSystem() {
             setViewState('loading');
-            if (localStorage.getItem("vr_registered") === "true" && currentUserLineId) {
-                setViewState('app');
-                loadServerData();
-                liff.init({ liffId: LIFF_ID }).then(() => {
-                    if (liff.isLoggedIn()) { checkOrUpdateProfile(); }
-                }).catch(err => console.log("Cache active mode."));
-            } else {
-                liff.init({ liffId: LIFF_ID }).then(() => {
-                    if (liff.isLoggedIn()) {
-                        checkOrUpdateProfile();
-                    } else {
-                        setViewState('login');
-                    }
-                }).catch(err => {
+            liff.init({ liffId: LIFF_ID }).then(() => {
+                if (liff.isLoggedIn()) {
+                    checkOrUpdateProfile();
+                } else {
+                    setViewState('login');
+                }
+            }).catch(err => {
+                // ระบบ Fallback กรณีรันแคชในอุปกรณ์เดิม
+                if (localStorage.getItem("vr_registered") === "true" && currentUserLineId) {
+                    setViewState('app');
+                    loadServerData();
+                } else {
                     alert("กรุณาเปิดลิงก์นี้ภายในแอปพลิเคชัน LINE ครับ");
-                });
-            }
+                }
+            });
         }
 
         function handleLineLogin() {
@@ -245,6 +242,7 @@
                 localStorage.setItem("vr_display_name", currentUserDisplayName);
                 localStorage.setItem("vr_picture_url", currentUserPicture);
 
+                // เช็คหลังบ้าน (Google Sheet) โดยตรง เพื่อป้องกันปัญหากรอกซ้ำซ้อน
                 const isRegisteredOnSheet = await verifyRegistrationOnServer(currentUserLineId);
 
                 if (isRegisteredOnSheet) {
@@ -252,7 +250,7 @@
                     setViewState('app');
                     loadServerData();
                 } else {
-                    setViewState('register'); // เรียกแสดงหน้ากรอกข้อมูลสมัครสมาชิกเพียงครั้งเดียวและห้ามเข้าหน้าอื่น
+                    setViewState('register'); // ส่งไปหน้าลงทะเบียนหากยังไม่มีประวัติในชีตเป้าหมาย
                 }
             }).catch(err => console.error(err));
         }
@@ -317,49 +315,78 @@
             }
         }
 
+        // ฟังก์ชันเรียกและเรนเดอร์ข้อมูลแบบ Real-time
         async function loadServerData() {
             if (!GAS_URL || GAS_URL.includes("YOUR_GAS_")) return;
+            
+            const tbody = document.getElementById('leaderboardBody');
+            
+            // แสดงสถานะกำลังโหลดเฉพาะกลุ่มที่เลือกแท็บตารางอันดับ
+            if (tbody && currentActiveTab === 'leaderboard') {
+                tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-slate-400">กำลังอัปเดตอันดับแบบเรียลไทม์... ⏳</td></tr>`;
+            }
+
             try {
-                // ดึงข้อมูลอันดับที่ประมวลผลแมตช์ชื่อจริงมาจาก Google Sheet แล้ว
+                // 1. ดึงและอัปเดตตาราง Leaderboard (ชื่อจริงจากชีตหลังบ้าน)
                 const lbRes = await fetch(`${GAS_URL}?action=getLeaderboard`);
                 const lbData = await lbRes.json();
-                const tbody = document.getElementById('leaderboardBody');
                 
-                if (lbData && lbData.leaderboard && lbData.leaderboard.length > 0) {
-                    tbody.innerHTML = '';
-                    lbData.leaderboard.forEach((item, index) => {
-                        const rank = index + 1;
-                        let rankDesign = `<span class="text-slate-400 font-bold">${rank}</span>`;
-                        if (rank === 1) rankDesign = `<span class="w-5 h-5 rounded-md bg-amber-100 text-amber-700 font-bold flex items-center justify-center mx-auto text-[11px]">1</span>`;
-                        if (rank === 2) rankDesign = `<span class="w-5 h-5 rounded-md bg-slate-100 text-slate-700 font-bold flex items-center justify-center mx-auto text-[11px]">2</span>`;
-                        if (rank === 3) rankDesign = `<span class="w-5 h-5 rounded-md bg-orange-100 text-orange-700 font-bold flex items-center justify-center mx-auto text-[11px]">3</span>`;
+                if (tbody) {
+                    if (lbData && lbData.leaderboard && lbData.leaderboard.length > 0) {
+                        tbody.innerHTML = '';
+                        lbData.leaderboard.forEach((item, index) => {
+                            const rank = index + 1;
+                            let rankDesign = `<span class="text-slate-400 font-bold">${rank}</span>`;
+                            if (rank === 1) rankDesign = `<span class="w-5 h-5 rounded-md bg-amber-100 text-amber-700 font-bold flex items-center justify-center mx-auto text-[11px]">1</span>`;
+                            if (rank === 2) rankDesign = `<span class="w-5 h-5 rounded-md bg-slate-100 text-slate-700 font-bold flex items-center justify-center mx-auto text-[11px]">2</span>`;
+                            if (rank === 3) rankDesign = `<span class="w-5 h-5 rounded-md bg-orange-100 text-orange-700 font-bold flex items-center justify-center mx-auto text-[11px]">3</span>`;
 
-                        const isItMe = String(item.lineUserId).trim() === String(currentUserLineId).trim();
-                        const rowBg = isItMe ? 'bg-orange-50 font-bold text-orange-950 border-l-4 border-orange-500' : 'hover:bg-slate-50';
+                            const isItMe = String(item.lineUserId).trim() === String(currentUserLineId).trim();
+                            const rowBg = isItMe ? 'bg-orange-50 font-bold text-orange-950 border-l-4 border-orange-500' : 'hover:bg-slate-50';
 
-                        tbody.innerHTML += `
-                            <tr class="${rowBg} transition-colors">
-                                <td class="py-2.5 px-3 text-center">${rankDesign}</td>
-                                <td class="py-2.5 px-2 truncate max-w-[180px]">${item.displayName} ${isItMe ? '<span class="text-[10px] bg-orange-500 text-white px-1.5 py-0.5 rounded ml-1">คุณ</span>' : ''}</td>
-                                <td class="py-2.5 px-3 text-right text-slate-900 font-semibold">${parseFloat(item.totalDistance).toFixed(2)} กม.</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-slate-400">ยังไม่มีประวัติการส่งผลวิ่งในโครงการ</td></tr>`;
+                            tbody.innerHTML += `
+                                <tr class="${rowBg} transition-colors">
+                                    <td class="py-2.5 px-3 text-center">${rankDesign}</td>
+                                    <td class="py-2.5 px-2 truncate max-w-[180px]">${item.displayName} ${isItMe ? '<span class="text-[10px] bg-orange-500 text-white px-1.5 py-0.5 rounded ml-1">คุณ</span>' : ''}</td>
+                                    <td class="py-2.5 px-3 text-right text-slate-900 font-semibold">${parseFloat(item.totalDistance).toFixed(2)} กม.</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-slate-400">ยังไม่มีรายชื่อสมาชิกลงทะเบียนในระบบ</td></tr>`;
+                    }
                 }
 
-                // ดึงระยะทางสะสมส่วนบุคคล
+                // 2. ดึงและอัปเดตข้อมูลความก้าวหน้าส่วนตัว
                 const progressRes = await fetch(`${GAS_URL}?action=getUserProgress&name=${encodeURIComponent(currentUserLineId)}`);
                 const progData = await progressRes.json();
                 const myDistance = parseFloat(progData.totalDistance || 0);
-                document.getElementById('userTotalDistance').innerText = myDistance.toFixed(2);
+                
+                if (document.getElementById('userTotalDistance')) {
+                    document.getElementById('userTotalDistance').innerText = myDistance.toFixed(2);
+                }
+                if (document.getElementById('userPicture') && currentUserPicture) {
+                    document.getElementById('userPicture').src = currentUserPicture;
+                }
+                if (document.getElementById('profileNameDisplay') && currentUserDisplayName) {
+                    document.getElementById('profileNameDisplay').innerText = currentUserDisplayName;
+                }
                 
                 const targetDistance = 70.00;
                 const percent = Math.min((myDistance / targetDistance) * 100, 100);
-                document.getElementById('progressBar').style.width = percent + '%';
-                document.getElementById('progressPercent').innerText = percent.toFixed(0) + '% สำเร็จ';
-            } catch (error) { console.error(error); }
+                
+                if (document.getElementById('progressBar')) {
+                    document.getElementById('progressBar').style.width = percent + '%';
+                }
+                if (document.getElementById('progressPercent')) {
+                    document.getElementById('progressPercent').innerText = percent.toFixed(0) + '% สำเร็จ';
+                }
+            } catch (error) { 
+                console.error(error); 
+                if (tbody && currentActiveTab === 'leaderboard') {
+                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-red-400">ไม่สามารถเชื่อมต่อฐานข้อมูลสเปรดชีตได้</td></tr>`;
+                }
+            }
         }
 
         document.getElementById('fileInput').addEventListener('change', function(e) {
@@ -410,6 +437,7 @@
             }
         });
 
+        // ปรับปรุงฟังก์ชันสลับแท็บให้เรียกอัปเดตแบบเรียลไทม์ทันทีที่กดเลือกแท็บ
         function switchTab(tabId, btnElement) {
             currentActiveTab = tabId;
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
@@ -430,13 +458,10 @@
                     targetBtn.classList.remove('text-slate-400'); targetBtn.classList.add('text-slate-900');
                 }
             }
-        }
 
-        function handleLogout() {
-            if (confirm("ต้องการล้างประวัติเชื่อมต่อระบบบนเครื่องนี้หรือไม่?")) {
-                localStorage.clear();
-                if (liff.isLoggedIn()) { liff.logout(); }
-                window.location.reload();
+            // ดึงข้อมูลสดใหม่จาก Google Sheet เสมอเมื่อเปิดหน้าอันดับหรือหน้าโปรไฟล์
+            if (tabId === 'leaderboard' || tabId === 'profile') {
+                loadServerData();
             }
         }
     </script>
