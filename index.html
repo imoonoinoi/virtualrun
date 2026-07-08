@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Run 2026 - User Registration</title>
+    <title>Virtual Run 2026 - Complete System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,7 +80,7 @@
                         <div>
                             <h3 class="font-bold text-slate-800 text-sm" id="profileNameDisplay">คุณนักวิ่งประจำโครงการ</h3>
                             <p class="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> ผ่านการลงทะเบียนแล้ว
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> สมาชิกVirtual Run แล้ว
                             </p>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
                             <thead>
                                 <tr class="bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-wider border-b border-slate-100">
                                     <th class="py-2.5 px-3 text-center w-16">อันดับ</th>
-                                    <th class="py-2.5 px-2">รายชื่อนักวิ่ง (LINE)</th>
+                                    <th class="py-2.5 px-2">รายชื่อนักวิ่ง (ชื่อ-นามสกุลจริง)</th>
                                     <th class="py-2.5 px-3 text-right">ระยะทางรวม</th>
                                 </tr>
                             </thead>
@@ -173,7 +173,7 @@
 
     <script>
         // ==========================================
-        // ⚠️ การตั้งค่าโปรแกรมหลัก
+        // ⚠️ การตั้งค่าโปรแกรมหลัก (ระบุข้อมูลของคุณ)
         // ==========================================
         const LIFF_ID = "2010404814-LPk7eCkS"; 
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz0wBgeAlyFQJElLS9QQznAIgs-Wdobc8tBAKsYIRx9JlYgOaUQH129Bu6kECw-lym8/exec"; 
@@ -181,6 +181,7 @@
         let currentUserLineId = localStorage.getItem("vr_line_id") || "";
         let currentUserDisplayName = localStorage.getItem("vr_display_name") || "";
         let currentUserPicture = localStorage.getItem("vr_picture_url") || "";
+        let currentActiveTab = "submit"; 
 
         let base64File = "";
         let fileName = "";
@@ -188,22 +189,41 @@
 
         document.addEventListener("DOMContentLoaded", () => { initSystem(); });
 
+        // ฟังก์ชันหัวใจหลักในการคุมสิทธิ์หน้าจอให้แยกขาดออกจากกัน (Strict View State)
+        function setViewState(state) {
+            document.getElementById("loadingSection").classList.add("hidden");
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("registerFormSection").classList.add("hidden");
+            document.getElementById("logoutBtn").classList.add("hidden");
+            document.getElementById("bottomNav").classList.add("hidden");
+            
+            if (state === 'loading') {
+                document.getElementById("loadingSection").classList.remove("hidden");
+            } else if (state === 'login') {
+                document.getElementById("loginSection").classList.remove("hidden");
+            } else if (state === 'register') {
+                document.getElementById("registerFormSection").classList.remove("hidden");
+            } else if (state === 'app') {
+                document.getElementById("logoutBtn").classList.remove("hidden");
+                document.getElementById("bottomNav").classList.remove("hidden");
+                switchTab(currentActiveTab);
+            }
+        }
+
         function initSystem() {
-            // เช็คว่าเคยลงทะเบียนครบถ้วนในเครื่องนี้หรือยัง
+            setViewState('loading');
             if (localStorage.getItem("vr_registered") === "true" && currentUserLineId) {
-                showMainApp();
+                setViewState('app');
                 loadServerData();
-                
                 liff.init({ liffId: LIFF_ID }).then(() => {
                     if (liff.isLoggedIn()) { checkOrUpdateProfile(); }
-                }).catch(err => console.log("Offline cache mode working fine."));
+                }).catch(err => console.log("Cache active mode."));
             } else {
                 liff.init({ liffId: LIFF_ID }).then(() => {
                     if (liff.isLoggedIn()) {
                         checkOrUpdateProfile();
                     } else {
-                        document.getElementById("loadingSection").classList.add("hidden");
-                        document.getElementById("loginSection").classList.remove("hidden");
+                        setViewState('login');
                     }
                 }).catch(err => {
                     alert("กรุณาเปิดลิงก์นี้ภายในแอปพลิเคชัน LINE ครับ");
@@ -215,7 +235,6 @@
             if (!liff.isLoggedIn()) { liff.login(); } else { checkOrUpdateProfile(); }
         }
 
-        // ดึงสิทธิ์โปรไฟล์ไลน์มาตรวจสอบสถานะการลงทะเบียนหลังบ้าน
         function checkOrUpdateProfile() {
             liff.getProfile().then(async (profile) => {
                 currentUserLineId = profile.userId;
@@ -226,35 +245,27 @@
                 localStorage.setItem("vr_display_name", currentUserDisplayName);
                 localStorage.setItem("vr_picture_url", currentUserPicture);
 
-                // ส่งค่าไปเช็คกับ Google Sheets ว่า LineUserID นี้เคยลงทะเบียนในชีต Users หรือยัง
                 const isRegisteredOnSheet = await verifyRegistrationOnServer(currentUserLineId);
 
                 if (isRegisteredOnSheet) {
                     localStorage.setItem("vr_registered", "true");
-                    showMainApp();
+                    setViewState('app');
                     loadServerData();
                 } else {
-                    // หากยังไม่เคยลงทะเบียน ให้เปิดหน้าฟอร์มกรอกข้อมูลสมาชิกใหม่
-                    document.getElementById("loadingSection").classList.add("hidden");
-                    document.getElementById("loginSection").classList.add("hidden");
-                    document.getElementById("registerFormSection").classList.remove("hidden");
+                    setViewState('register'); // เรียกแสดงหน้ากรอกข้อมูลสมัครสมาชิกเพียงครั้งเดียวและห้ามเข้าหน้าอื่น
                 }
-            }).catch(err => console.error("Line profile error", err));
+            }).catch(err => console.error(err));
         }
 
-        // ฟังก์ชันส่งตรวจสอบรายชื่อผู้ใช้บนเซิร์ฟเวอร์ Sheet ข้ามเครื่อง
         async function verifyRegistrationOnServer(lineId) {
             if (!GAS_URL || GAS_URL.includes("YOUR_GAS_")) return false;
             try {
                 const res = await fetch(`${GAS_URL}?action=checkUserExists&lineUserId=${encodeURIComponent(lineId)}`);
                 const data = await res.json();
                 return data.exists === true;
-            } catch (e) {
-                return false;
-            }
+            } catch (e) { return false; }
         }
 
-        // ฟังก์ชันจัดการบันทึกแบบฟอร์มลงทะเบียนสมาชิกใหม่
         async function submitUserRegistration() {
             const firstName = document.getElementById("regFirstName").value.trim();
             const lastName = document.getElementById("regLastName").value.trim();
@@ -267,54 +278,49 @@
             btn.innerText = "กำลังบันทึกข้อมูลลงระบบ... ⏳";
             btn.disabled = true;
 
-            const payload = {
-                action: "registerUser",
-                lineUserId: currentUserLineId,
-                firstName: firstName,
-                lastName: lastName,
-                nationalId: nationalId
-            };
+            const formData = new URLSearchParams();
+            formData.append('action', 'registerUser');
+            formData.append('lineUserId', currentUserLineId);
+            formData.append('firstName', firstName);
+            formData.append('lastName', lastName);
+            formData.append('nationalId', nationalId);
 
             try {
-                const response = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const response = await fetch(GAS_URL, { 
+                    method: 'POST', 
+                    body: formData,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                });
                 const result = await response.json();
 
                 if (result.status === 'success') {
                     localStorage.setItem("vr_registered", "true");
                     alert("ลงทะเบียนสมาชิกแรกเข้าสำเร็จเรียบร้อยแล้วครับ! 🎉");
-                    document.getElementById("registerFormSection").classList.add("hidden");
-                    showMainApp();
+                    setViewState('app');
                     loadServerData();
                 } else {
-                    alert("เกิดข้อผิดพลาดในการลงทะเบียน: " + result.message);
+                    alert("เกิดข้อผิดพลาด: " + result.message);
+                    btn.innerText = "บันทึกการลงทะเบียนแรกเข้า";
+                    btn.disabled = false;
                 }
             } catch (error) {
-                // Fallback เผื่อกรณี CORS บนบางเครือข่ายแต่ส่งข้อมูลสำเร็จ
-                localStorage.setItem("vr_registered", "true");
-                document.getElementById("registerFormSection").classList.add("hidden");
-                showMainApp();
-                loadServerData();
-            } finally {
-                btn.innerText = "บันทึกการลงทะเบียนแรกเข้า";
-                btn.disabled = false;
+                const checkAgain = await verifyRegistrationOnServer(currentUserLineId);
+                if (checkAgain) {
+                    localStorage.setItem("vr_registered", "true");
+                    setViewState('app');
+                    loadServerData();
+                } else {
+                    alert("บันทึกไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า Deploy ของคุณครับ");
+                    btn.innerText = "บันทึกการลงทะเบียนแรกเข้า";
+                    btn.disabled = false;
+                }
             }
-        }
-
-        function showMainApp() {
-            document.getElementById("loadingSection").classList.add("hidden");
-            document.getElementById("loginSection").classList.add("hidden");
-            document.getElementById("registerFormSection").classList.add("hidden");
-            document.getElementById("logoutBtn").classList.remove("hidden");
-            document.getElementById("bottomNav").classList.remove("hidden");
-            
-            document.getElementById("profileNameDisplay").innerText = currentUserDisplayName;
-            if (currentUserPicture) { document.getElementById("userPicture").src = currentUserPicture; }
-            switchTab('submit');
         }
 
         async function loadServerData() {
             if (!GAS_URL || GAS_URL.includes("YOUR_GAS_")) return;
             try {
+                // ดึงข้อมูลอันดับที่ประมวลผลแมตช์ชื่อจริงมาจาก Google Sheet แล้ว
                 const lbRes = await fetch(`${GAS_URL}?action=getLeaderboard`);
                 const lbData = await lbRes.json();
                 const tbody = document.getElementById('leaderboardBody');
@@ -328,21 +334,22 @@
                         if (rank === 2) rankDesign = `<span class="w-5 h-5 rounded-md bg-slate-100 text-slate-700 font-bold flex items-center justify-center mx-auto text-[11px]">2</span>`;
                         if (rank === 3) rankDesign = `<span class="w-5 h-5 rounded-md bg-orange-100 text-orange-700 font-bold flex items-center justify-center mx-auto text-[11px]">3</span>`;
 
-                        const isItMe = String(item.name).trim() === String(currentUserLineId).trim();
-                        const rowBg = isItMe ? 'bg-orange-50 font-bold text-orange-950' : 'hover:bg-slate-50';
+                        const isItMe = String(item.lineUserId).trim() === String(currentUserLineId).trim();
+                        const rowBg = isItMe ? 'bg-orange-50 font-bold text-orange-950 border-l-4 border-orange-500' : 'hover:bg-slate-50';
 
                         tbody.innerHTML += `
                             <tr class="${rowBg} transition-colors">
                                 <td class="py-2.5 px-3 text-center">${rankDesign}</td>
-                                <td class="py-2.5 px-2 truncate max-w-[150px]">🏃 ${isItMe ? 'คุณ (เครื่องนี้)' : 'ผู้เข้าร่วมโครงการ'}</td>
+                                <td class="py-2.5 px-2 truncate max-w-[180px]">${item.displayName} ${isItMe ? '<span class="text-[10px] bg-orange-500 text-white px-1.5 py-0.5 rounded ml-1">คุณ</span>' : ''}</td>
                                 <td class="py-2.5 px-3 text-right text-slate-900 font-semibold">${parseFloat(item.totalDistance).toFixed(2)} กม.</td>
                             </tr>
                         `;
                     });
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-slate-400">ยังไม่มีประวัติในระบบ</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-slate-400">ยังไม่มีประวัติการส่งผลวิ่งในโครงการ</td></tr>`;
                 }
 
+                // ดึงระยะทางสะสมส่วนบุคคล
                 const progressRes = await fetch(`${GAS_URL}?action=getUserProgress&name=${encodeURIComponent(currentUserLineId)}`);
                 const progData = await progressRes.json();
                 const myDistance = parseFloat(progData.totalDistance || 0);
@@ -352,9 +359,7 @@
                 const percent = Math.min((myDistance / targetDistance) * 100, 100);
                 document.getElementById('progressBar').style.width = percent + '%';
                 document.getElementById('progressPercent').innerText = percent.toFixed(0) + '% สำเร็จ';
-            } catch (error) {
-                console.error("Error loading server data:", error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         document.getElementById('fileInput').addEventListener('change', function(e) {
@@ -388,13 +393,13 @@
             };
 
             try {
-                const response = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
-                await loadServerData();
-                alert('บันทึกผลการวิ่งสำเร็จแล้ว! 🎉');
+                await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
                 document.getElementById('distanceInput').value = '';
                 document.getElementById('fileInput').value = '';
                 document.getElementById('fileNameDisplay').innerText = 'กดเพื่อถ่ายภาพหรือเลือกรูป';
                 base64File = "";
+                alert('บันทึกผลการวิ่งสำเร็จแล้ว! 🎉');
+                await loadServerData();
                 switchTab('profile');
             } catch (error) {
                 await loadServerData();
@@ -406,15 +411,24 @@
         });
 
         function switchTab(tabId, btnElement) {
+            currentActiveTab = tabId;
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById(tabId + 'Tab').classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('text-slate-900'); btn.classList.add('text-slate-400'); });
+            
+            const targetTab = document.getElementById(tabId + 'Tab');
+            if (targetTab) targetTab.classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => { 
+                btn.classList.remove('text-slate-900'); btn.classList.add('text-slate-400'); 
+            });
+            
             if(btnElement) {
                 btnElement.classList.remove('text-slate-400'); btnElement.classList.add('text-slate-900');
             } else {
                 const index = tabId === 'profile' ? 0 : (tabId === 'submit' ? 1 : 2);
-                document.querySelectorAll('.nav-btn')[index].classList.remove('text-slate-400');
-                document.querySelectorAll('.nav-btn')[index].classList.add('text-slate-900');
+                const targetBtn = document.querySelectorAll('.nav-btn')[index];
+                if (targetBtn) {
+                    targetBtn.classList.remove('text-slate-400'); targetBtn.classList.add('text-slate-900');
+                }
             }
         }
 
